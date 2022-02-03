@@ -1,0 +1,101 @@
+version: "3.8"
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=32181
+      - ZOOKEEPER_SERVER_ID=1
+  kafka:
+    image: confluentinc/cp-kafka
+    ports:
+      - 29092:29092
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092
+      - KAFKA_BROKER_ID=1
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:32181
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+  minio:
+    image: minio/minio
+    command: server /data
+    volumes:
+      # Ensure the directories exist prior to running this file
+      - ./minio-conf/:/root/.minio:Z
+      - ./minio-data/:/data:Z
+    ports:
+      - 9000:9000
+    environment:
+      - MINIO_ACCESS_KEY=$MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY=$MINIO_SECRET_KEY
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add myminio http://minio:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY;
+      /usr/bin/mc mb myminio/insights-upload-perma;
+      /usr/bin/mc mb myminio/insights-upload-rejected;
+      /usr/bin/mc policy download myminio/insights-upload-perma;
+      /usr/bin/mc policy download myminio/insights-upload-rejected;
+      exit 0;
+      "
+
+  ingress:
+    image: quay.io/cloudservices/insights-ingress:latest
+    ports:
+      - 8080:3000
+    environment:
+      - INGRESS_STAGEBUCKET=insights-upload-perma
+        # VALIDTOPICS is required. This is derived from content type. ex: vnd.redhat.qpc.thing+tgz
+      - INGRESS_VALIDTOPICS=qpc
+      - OPENSHIFT_BUILD_COMMIT=somestring
+      - INGRESS_MAXSIZE=104857600
+      - INGRESS_MINIODEV=true
+      - INGRESS_MINIOACCESSKEY=$MINIO_ACCESS_KEY
+      - INGRESS_MINIOSECRETKEY=$MINIO_SECRET_KEY
+      - INGRESS_MINIOENDPOINT=minio:9000
+    depends_on:
+       - kafka
+
+  insights-inventory-mq: &inventory
+    image: quay.io/cloudservices/insights-inventory:latest
+    restart: always
+    command: "make upgrade_db run_inv_mq_service"
+    environment:
+      - APP_NAME=inventory
+      - PATH_PREFIX=api
+      - INVENTORY_DB_USER=insights
+      - INVENTORY_DB_PASS=insights
+      - INVENTORY_DB_HOST=db-host-inventory
+      - INVENTORY_DB_NAME=insights
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - PAYLOAD_TRACKER_ENABLED=false
+    depends_on:
+       - db-host-inventory
+       - createbuckets
+
+  insights-inventory-web:
+    <<: *inventory
+    command: "make upgrade_db run_inv_web_service"
+    depends_on:
+      - insights-inventory-mq
+    ports:
+      - 8001:8080
+
+  db-host-inventory:
+      image: postgres
+      restart: always
+      environment:
+        POSTGRES_PASSWORD: insights
+        POSTGRES_USER: insights
+        POSTGRES_DB: insights
+      ports:
+        - "5432:5432"
+
+volumes:
+  minio_conf:
+  minio_data:
