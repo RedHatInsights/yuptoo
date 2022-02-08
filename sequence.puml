@@ -1,0 +1,21 @@
+@startuml
+title YUPTOO Processing Flow
+entity platform.upload.qpc
+entity platform.upload.validation
+participant yuptoo
+entity platform.inventory.hostingress
+participant hbi
+platform.upload.qpc->yuptoo: msg
+Note right of platform.upload.qpc: {"request_id": "abcd1234",\n"account": "000001",\n"principal": "123456",\n"size": "size_in_bytes",\n"service": "destination service",\n"category": "file category",\n"url": "bucket_url",\n"b64_identity": "base64_identity_string",\n"metadata": {}\n}
+yuptoo->yuptoo: Downloads archive from\nS3 bucket
+yuptoo->yuptoo: Extracts report slices from archive
+alt success
+    yuptoo->yuptoo: Transform hosts
+    yuptoo->platform.inventory.hostingress: msg
+    Note right of yuptoo: {"data": [{"facts": {},\n"system_profile": {}}],\n"platform_metadata": <original_msg_json>}
+else failure
+    yuptoo[#0000FF]->platform.upload.validation: msg
+    Note left of yuptoo: {"request_id": "abcd1234",\n"validation": "failure"}
+end
+platform.inventory.hostingress->hbi: msg
+@enduml
