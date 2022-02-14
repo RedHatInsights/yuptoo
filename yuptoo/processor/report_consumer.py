@@ -4,8 +4,8 @@ import pytz
 from yuptoo.config.base import get_logger, INSIGHTS_KAFKA_ADDRESS, QPC_TOPIC, GROUP_ID
 from datetime import datetime, timedelta
 from urllib.parse import parse_qs, urlparse
-from .report_processor import ReportProcessor
-from .exceptions import QPCReportException, QPCKafkaMsgException
+from yuptoo.processor.report_processor import ReportProcessor
+from .exceptions import QPCKafkaMsgException
 
 
 LOG = get_logger(__name__)
@@ -35,23 +35,16 @@ class ReportConsumer:
     def run(self):
         """Intialize Report Consumer."""
         LOG.info(f"{self.prefix} - Report Consumer started.  Waiting for messages...")
-        # print(dir(self.consumer))
 
-        # con = ((self.consumer).poll())
-        # print(dir(con))
-        # print(con.topic())
         for msg in iter(self):
             if msg.error():
                 LOG.error("%s - Kafka error occured : %s.", self.prefix, msg.error())
                 raise KafkaException(msg.error())
             try:
-                print("Hello World")
                 topic = msg.topic()
                 msg = json.loads(msg.value().decode("utf-8"))
                 msg['topic'] = topic
-                print(msg)
                 self.handle_message(msg)
-                # add listen_for_messages() func inside run() func
             except json.decoder.JSONDecodeError:
                 LOG.error(
                     'Unable to decode kafka message: %s - %s',
@@ -68,16 +61,13 @@ class ReportConsumer:
 
     def handle_message(self, upload_message):
         """Handle the JSON report."""
-        # This msg is the message we are getting
-        # from QPC topic. We are fetching it here directly
+
         if upload_message.get('topic') == QPC_TOPIC:
             account = upload_message.get('account')
             LOG.info(
                 '%s - Received record on %s topic for account %s.',
                 self.prefix, QPC_TOPIC, account)
             try:
-                # since we are not saving anything to db,
-                # we are only trying to consume the incoming message
                 missing_fields = []
                 request_id = upload_message.get('request_id')
                 url = upload_message.get('url')
@@ -92,23 +82,16 @@ class ReportConsumer:
                         LOG.error(
                             self.prefix,
                             'Message missing required field(s): %s.' % ', '.join(missing_fields)))
-                print("###################")
-                print("Checkpoint 1 before URL EXPIRY CHECK")
+
                 self.check_if_url_expired(url, request_id)
-                # we want to construct the incoming message properly
-                # to send it to the report processor directly, instead
-                # of saving it to the database.
                 upload_message.update(
                     {
                         'last_update_time': datetime.now(pytz.utc),
                         'arrival_time': datetime.now(pytz.utc),
                     }
                 )
-                print(upload_message)
-                print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
                 # sending this msg to report_processor
-                rp = ReportProcessor()
-                rp.pass_message_to_report_processor(upload_message)
+                ReportProcessor().pass_message_to_report_processor(upload_message)
 
             except QPCKafkaMsgException as message_error:
                 LOG.error(
