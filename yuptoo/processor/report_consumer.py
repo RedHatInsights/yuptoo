@@ -13,8 +13,7 @@ LOG = get_logger(__name__)
 
 class ReportConsumer:
     def __init__(self):
-        self.account_number = None
-        self.upload_message = None
+        self.account = None
         self.prefix = 'REPORT CONSUMER'
         self.consumer = Consumer({
             'bootstrap.servers': INSIGHTS_KAFKA_ADDRESS,
@@ -61,6 +60,8 @@ class ReportConsumer:
 
     def handle_message(self, upload_message):
         """Handle the JSON report."""
+        print("PRINTING UPLOAD MSG>>>>>>>>>>>>>>>>>>")
+        print(upload_message)
 
         if upload_message.get('topic') == QPC_TOPIC:
             account = upload_message.get('account')

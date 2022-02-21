@@ -1,7 +1,5 @@
-import imp
 import json
-from os import stat
-from xml.dom import VALIDATION_ERR
+from urllib import request
 import requests
 from datetime import datetime, timedelta
 import tarfile
@@ -33,6 +31,7 @@ class ReportProcessor(ReportValidator):
 
     def pass_message_to_report_processor(self, consumed_message):
         self.account = consumed_message.get('account')
+        self.b64_identity = consumed_message.get('b64_identity')
         """
         Connecting consumer with processor.
         """
@@ -40,9 +39,11 @@ class ReportProcessor(ReportValidator):
         report_tar = self.download_report(consumed_message)
         self.extract_and_create_slices(report_tar)
 
+    def process_slice(self, slice_json):
         self.status = FAILURE_CONFIRM_STATUS
         message_hash = self.request_id
-        candidate_hosts = self.validate_report_details()
+        candidate_hosts = self.validate_report_details(slice_json)
+
         if candidate_hosts:
             self.status = SUCCESS_CONFIRM_STATUS
         validation_message = {
@@ -58,11 +59,11 @@ class ReportProcessor(ReportValidator):
         # we want to generate a dictionary of just the id mapped to the data
         # so we iterate the list creating a dictionary of the key: value if
         # the key is not 'cause' or 'status_code'
-
         candidates = {key: host[key] for host in candidate_hosts
                       for key in host.keys() if key not in ['cause', 'status_code']}
 
-        ReportSliceProcessor().upload_to_host_inventory_via_kafka(candidates)
+        report_slice_processor = ReportSliceProcessor(self.report_platform_id)
+        report_slice_processor.upload_to_host_inventory_via_kafka(candidates, self.b64_identity, self.request_id)
 
     def download_report(self, consumed_message):
         """
@@ -73,7 +74,7 @@ class ReportProcessor(ReportValidator):
             report_url = consumed_message.get('url', None)
             if not report_url:
                 raise FailDownloadException(
-                    '%s - Kafka message has no report url.  Message: %s', 
+                    '%s - Kafka message has no report url.  Message: %s',
                     prefix, consumed_message)
 
             LOG.info(
@@ -107,6 +108,7 @@ class ReportProcessor(ReportValidator):
             tar = tarfile.open(fileobj=BytesIO(report_tar), mode='r:*')
             files = tar.getmembers()
             json_files = []
+            all_hosts = []
             metadata_file = None
             for file in files:
                 # First we need to Find the metadata file
@@ -121,6 +123,7 @@ class ReportProcessor(ReportValidator):
                     report_names = []
                     for report_id, num_hosts in valid_slice_ids.items():
                         for file in json_files:
+                            print(report_id)
                             if report_id in file.name:
                                 matches_metadata = True
                                 mismatch_message = ''
@@ -155,6 +158,7 @@ class ReportProcessor(ReportValidator):
                                         (report_id, report_slice_id)
                                     mismatch_message += invalid_report_id
                                 hosts = report_slice_json.get('hosts', {})
+
                                 if len(hosts) != num_hosts:
                                     matches_metadata = False
                                     invalid_hosts = 'Metadata for report slice'\
@@ -181,14 +185,16 @@ class ReportProcessor(ReportValidator):
                                     slice_options)
                                 if created:
                                     report_names.append(report_id)
+                                self.process_slice(report_slice_json)
 
                     if not report_names:
                         raise FailExtractException(
                             '%s - Report contained no valid report slices for account=%s.',
                             prefix, self.account)
+                    slice_process_message = '%s - Successfully extracted & created report slices for account=%s '\
+                        'and report_platform_id=%s.'
                     LOG.info(
-                        '%s - Successfully extracted & created report slices for account=%s '\
-                        'and report_platform_id=%s.',
+                        slice_process_message,
                         prefix, self.account, self.report_platform_id)
                     return options
 
@@ -280,10 +286,10 @@ class ReportProcessor(ReportValidator):
             bytes = json.dumps(msg, ensure_ascii=False).encode("utf-8")
 
             self.producer.produce(topic, bytes, callback=self.delivery_report)
-            # currently, this msg is successfully going to the validation topic,
-            # but, callback `delivery_report` is not getting invoked.
             self.producer.poll(1)
         except KafkaException:
             LOG.exception(
                 "Failed to produce message to [%s] topic: %s", topic, self.request_id
             )
+        finally:
+            self.producer.flush()

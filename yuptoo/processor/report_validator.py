@@ -67,8 +67,6 @@ class ReportValidator:
             'host_inventory_api_version': host_inventory_api_version,
             'source': self.source
         }
-        print("HELLO FROM VALIDATE METADATA FILE....................")
-        print(options)
 
         self.source_metadata = metadata_json.get('source_metadata')
         # if source_metadata exists, we should log it
@@ -106,8 +104,7 @@ class ReportValidator:
 
         return valid_slice_ids, options
 
-    # def validate_report_details(self): returns candidate hosts
-    def validate_report_details(self):  # pylint: disable=too-many-locals
+    def validate_report_details(self, slice_json):  # pylint: disable=too-many-locals
         """
         Verify that the report contents are a valid Insights report.
         :returns: tuple contain list of valid and invalid hosts
@@ -117,8 +114,9 @@ class ReportValidator:
                          'hosts']
 
         missing_keys = []
+        self.slice_json = slice_json
         for key in required_keys:
-            required_key = self.report_json.get(key)
+            required_key = self.slice_json.get(key)
             if not required_key:
                 missing_keys.append(key)
 
@@ -132,7 +130,8 @@ class ReportValidator:
         invalid_hosts_message = \
             '%s - Hosts must be a list of dictionaries, account=%s '\
             'and report_platform_id=%s. Source metadata: %s'
-        hosts = self.report_json.get('hosts')
+        hosts = self.slice_json.get('hosts')
+
         if not hosts or not isinstance(hosts, list):
             LOG.error(invalid_hosts_message, prefix, self.account,
                       self.report_platform_id, self.source_metadata)
@@ -149,9 +148,8 @@ class ReportValidator:
                 invalid_hosts_message, prefix, self.account, self.report_platform_id,
                 self.source_metadata, invalid_hosts_count)
             raise QPCReportException()
-        print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
-        print("Calling validate_hosts method")
-        report_slice_id = self.report_json.get('report_slice_id')
+
+        report_slice_id = self.slice_json.get('report_slice_id')
         candidate_hosts, hosts_without_facts = \
             self.validate_report_hosts(report_slice_id)
 
@@ -174,7 +172,7 @@ class ReportValidator:
         """Verify that report hosts contain canonical facts.
         :returns: tuple containing valid & invalid hosts
         """
-        hosts = self.report_json.get('hosts', [])
+        hosts = self.slice_json.get('hosts', [])
 
         prefix = 'VALIDATE HOSTS'
         candidate_hosts = []
@@ -182,6 +180,7 @@ class ReportValidator:
         for host in hosts:
             host_uuid = str(uuid.uuid4())
             host['account'] = self.account
+            host['report_slice_id'] = str(report_slice_id)
             host_facts = host.get('facts', [])
             host_facts.append({'namespace': 'yupana',
                                'facts': {'yupana_host_id': host_uuid,
