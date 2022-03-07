@@ -13,16 +13,27 @@
     "paths": {
         "/status": {
             "get": {
-                "summary": "Health check liveness call",
-                "description": "A small JSON indicating the application is deployed. This serves as both the liveness and readiness call.",
-                "operationId": "getStatus",
+                "summary": "Provides endpoint for server status",
+                "description": "Server status and setup information.",
+                "operationId": "serverStatus",
+                "security": [],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Server status",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Status"
+                                    "$ref": "#/components/schemas/ServerStatus"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Unexpected error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
                                 }
                             }
                         }
@@ -33,13 +44,27 @@
     },
     "components": {
         "schemas": {
-            "Status": {
+            "ServerStatus": {
                 "required": [
                     "status"
                 ],
                 "properties": {
                     "status": {
                         "type": "string"
+                    }
+                }
+            },
+            "Error": {
+                "properties": {
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "example": {
+                                "detail": "Unexpected error. See logs.",
+                                "status": 500
+                            }
+                        }
                     }
                 }
             }
