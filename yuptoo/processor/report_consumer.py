@@ -32,7 +32,7 @@ class ReportConsumer:
         return msg
 
     def run(self):
-        """Intialize Report Consumer."""
+        """Initialize Report Consumer."""
         LOG.info(f"{self.prefix} - Report Consumer started.  Waiting for messages...")
 
         for msg in iter(self):
@@ -60,8 +60,6 @@ class ReportConsumer:
 
     def handle_message(self, upload_message):
         """Handle the JSON report."""
-        print("PRINTING UPLOAD MSG>>>>>>>>>>>>>>>>>>")
-        print(upload_message)
 
         if upload_message.get('topic') == QPC_TOPIC:
             account = upload_message.get('account')
@@ -91,7 +89,6 @@ class ReportConsumer:
                         'arrival_time': datetime.now(pytz.utc),
                     }
                 )
-                # sending this msg to report_processor
                 ReportProcessor().pass_message_to_report_processor(upload_message)
 
             except QPCKafkaMsgException as message_error:

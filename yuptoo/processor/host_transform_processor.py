@@ -12,9 +12,6 @@ OS_RELEASE_PATTERN = re.compile(
 OS_VS_ENUM = {'Red Hat': 'RHEL', 'CentOS': 'CentOS'}
 TRANSFORMED_DICT = dict({'removed': [], 'modified': [], 'missing_data': []})
 
-# MAY be I need to create this as a class and the slice processor should
-# inherit from this
-# and follow the same code as yupana (previous)
 
 class HostTransformProcessor:
     @staticmethod

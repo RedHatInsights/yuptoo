@@ -37,7 +37,7 @@ class ReportProcessor(ReportValidator):
         """
         self.request_id = consumed_message.get('request_id')
         report_tar = self.download_report(consumed_message)
-        self.extract_and_create_slices(report_tar)
+        self.extract_report_slices(report_tar)
 
     def process_slice(self, slice_json):
         self.status = FAILURE_CONFIRM_STATUS
@@ -98,7 +98,7 @@ class ReportProcessor(ReportValidator):
                 prefix, report_url, err,
                 consumed_message.get('account'))
 
-    def extract_and_create_slices(self, report_tar):
+    def extract_report_slices(self, report_tar):
         """Extract Insights report from tar file and
         returns Insights report as dict"""
 
@@ -123,7 +123,6 @@ class ReportProcessor(ReportValidator):
                     report_names = []
                     for report_id, num_hosts in valid_slice_ids.items():
                         for file in json_files:
-                            print(report_id)
                             if report_id in file.name:
                                 matches_metadata = True
                                 mismatch_message = ''
@@ -174,24 +173,14 @@ class ReportProcessor(ReportValidator):
                                         prefix, mismatch_message, self.account, self.report_platform_id)
                                     continue
 
-                                slice_options = {
-                                    'report_json': report_slice_json,
-                                    'report_slice_id': report_slice_id,
-                                    'hosts_count': num_hosts,
-                                    'source': options.get('source'),
-                                    'source_metadata': options.get('source_metadata', {})
-                                }
-                                created = self.create_report_slice(
-                                    slice_options)
-                                if created:
-                                    report_names.append(report_id)
+                                report_names.append(report_id)
                                 self.process_slice(report_slice_json)
 
                     if not report_names:
                         raise FailExtractException(
                             '%s - Report contained no valid report slices for account=%s.',
                             prefix, self.account)
-                    slice_process_message = '%s - Successfully extracted & created report slices for account=%s '\
+                    slice_process_message = '%s - Successfully extracted report slices for account=%s '\
                         'and report_platform_id=%s.'
                     LOG.info(
                         slice_process_message,
@@ -216,35 +205,8 @@ class ReportProcessor(ReportValidator):
                 '%s - Unexpected error reading tar file: %s for account=%s.',
                 prefix, str(err), self.account)
 
-    def create_report_slice(self, options):
-        prefix = 'CREATE REPORT SLICE'
-
-        self.report_json = options.get('report_json')
-        report_slice_id = options.get('report_slice_id')
-        hosts_count = options.get('hosts_count')
-        self.source = options.get('source')
-        self.source_metadata = options.get('source_metadata')
-        LOG.info(
-            '%s - Creating report slice %s for account=%s and report_platform_id=%s',
-            prefix, report_slice_id, self.account, self.report_platform_id)
-
-        report_slice = {
-            'account': self.account,
-            'last_update_time': datetime.now(pytz.utc),
-            'report_json': json.dumps(self.report_json),  # corresponding dumps
-            'report_platform_id': self.report_platform_id,
-            'report_slice_id': report_slice_id,
-            'hosts_count': hosts_count,
-            'source': self.source,
-            'source_metadata': json.dumps(self.source_metadata),
-            'creation_time': datetime.now(pytz.utc)
-        }
-        LOG.info(
-            '%s - Successfully created report slice %s for account=%s and report_platform_id=%s.',
-            prefix, report_slice_id, self.account, self.report_platform_id)
-        return True
-
-    # def deduplicate_reports() What to do if report with same id is retried to be uploaded.
+    # FIXME def deduplicate_reports() What to do if
+    # report with same id is retried to be uploaded.
 
     def get_stale_time(self):
         """Compute the stale date based on the host source."""
