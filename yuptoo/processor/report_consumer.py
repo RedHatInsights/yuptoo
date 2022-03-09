@@ -1,7 +1,7 @@
 from confluent_kafka import Consumer, KafkaException
 import json
 import pytz
-from yuptoo.config.base import get_logger, INSIGHTS_KAFKA_ADDRESS, QPC_TOPIC, GROUP_ID
+from yuptoo.config.base import get_logger, INSIGHTS_KAFKA_ADDRESS, QPC_TOPIC, GROUP_ID, KAFKA_AUTO_COMMIT
 from datetime import datetime, timedelta
 from urllib.parse import parse_qs, urlparse
 from yuptoo.processor.report_processor import ReportProcessor
@@ -18,7 +18,7 @@ class ReportConsumer:
         self.consumer = Consumer({
             'bootstrap.servers': INSIGHTS_KAFKA_ADDRESS,
             'group.id': GROUP_ID,
-            'enable.auto.commit': False
+            'enable.auto.commit': KAFKA_AUTO_COMMIT
         })
         self.consumer.subscribe([QPC_TOPIC])
 
@@ -45,6 +45,7 @@ class ReportConsumer:
                 msg['topic'] = topic
                 self.handle_message(msg)
             except json.decoder.JSONDecodeError:
+                self.consumer.commit()
                 LOG.error(
                     'Unable to decode kafka message: %s - %s',
                     msg.value(), self.prefix
@@ -56,7 +57,8 @@ class ReportConsumer:
                     self.prefix
                 )
             finally:
-                self.consumer.commit()
+                if not KAFKA_AUTO_COMMIT:
+                    self.consumer.commit()
 
     def handle_message(self, upload_message):
         """Handle the JSON report."""
