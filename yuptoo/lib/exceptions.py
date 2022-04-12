@@ -15,6 +15,7 @@ class KafkaMsgHandlerError(Exception):
 
     pass
 
+
 class QPCReportException(Exception):
     """Use to report errors during qpc report processing."""
 

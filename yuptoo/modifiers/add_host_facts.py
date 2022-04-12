@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 LOG = get_logger(__name__)
 prefix = 'ADD_HOST_FACTS'
 
+
 def run(host: dict, transformed_obj: dict, request_obj: dict):
     cert_cn = None
     try:
@@ -19,14 +20,14 @@ def run(host: dict, transformed_obj: dict, request_obj: dict):
             prefix, 'Invalid identity. Key not found: %s', err)
 
     unique_id_base = '{}:{}:'.format(request_obj['request_id'],
-                                         request_obj['report_platform_id'])
+                                     request_obj['report_platform_id'])
 
     host['system_unique_id'] = unique_id_base + host['yupana_host_id']
 
     host['account'] = request_obj['account']
     host_facts = host.get('facts', [])
     host_facts.append({'namespace': 'yupana',
-                        'facts': {'yupana_host_id': host['yupana_host_id'],
+                       'facts': {'yupana_host_id': host['yupana_host_id'],
                                     'report_platform_id': str(request_obj['report_platform_id']),
                                     'report_slice_id': host['report_slice_id'],
                                     'account': request_obj['account'],
@@ -37,6 +38,7 @@ def run(host: dict, transformed_obj: dict, request_obj: dict):
     if cert_cn and ('system_profile' in host):
         host['system_profile']['owner_id'] = cert_cn
     transformed_obj['modified'].append('facts')
+
 
 def get_stale_time(request_obj):
     """Compute the stale date based on the host source."""

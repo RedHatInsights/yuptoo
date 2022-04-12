@@ -36,6 +36,7 @@ def transform_mtu(nic: dict, increment_counts: dict):
     increment_counts['mtu'] += 1
     return increment_counts, nic
 
+
 def transform_ipv6(nic: dict, increment_counts: dict):
     """Remove empty 'network_interfaces[]['ipv6_addresses']."""
     old_len = len(nic['ipv6_addresses'])

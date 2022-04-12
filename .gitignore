@@ -9,3 +9,5 @@ lib64
 .scannerwork
 .envs
 tmp
+scripts/minio-conf/
+scripts/minio-data/
