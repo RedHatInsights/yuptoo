@@ -6,6 +6,7 @@ OS_RELEASE_PATTERN = re.compile(
 )
 OS_VS_ENUM = {'Red Hat': 'RHEL', 'CentOS': 'CentOS'}
 
+
 def run(host: dict, transformed_obj: dict, request_obj: dict):
     """Transform 'system_profile.os_release' label."""
     system_profile = host.get('system_profile', {})
@@ -48,17 +49,17 @@ def run(host: dict, transformed_obj: dict, request_obj: dict):
 
 
 def match_regex_and_find_os_details(os_release):
-        """Match Regex with os_release and return os_details."""
-        source_os_release = os_release.strip()
-        if not source_os_release:
-            return None
+    """Match Regex with os_release and return os_details."""
+    source_os_release = os_release.strip()
+    if not source_os_release:
+        return None
 
-        match_result = OS_RELEASE_PATTERN.match(source_os_release)
-        os_details = match_result.groupdict()
-        if os_details['minor']:
-            os_details['version'] = f"{os_details['major']}.{os_details['minor']}"
-        else:
-            os_details['version'] = os_details['major']
-            os_details['minor'] = '0'
+    match_result = OS_RELEASE_PATTERN.match(source_os_release)
+    os_details = match_result.groupdict()
+    if os_details['minor']:
+        os_details['version'] = f"{os_details['major']}.{os_details['minor']}"
+    else:
+        os_details['version'] = os_details['major']
+        os_details['minor'] = '0'
 
-        return os_details
+    return os_details

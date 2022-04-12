@@ -1,12 +1,14 @@
 import os
 import logging
 
+
 def get_logger(name):
     logging.basicConfig(
         level='INFO',
         format='%(asctime)s - %(levelname)s  - %(funcName)s - %(message)s'
     )
     return logging.getLogger(name)
+
 
 INSIGHTS_KAFKA_HOST = os.getenv('INSIGHTS_KAFKA_HOST', 'localhost')
 INSIGHTS_KAFKA_PORT = os.getenv('INSIGHTS_KAFKA_PORT', '29092')

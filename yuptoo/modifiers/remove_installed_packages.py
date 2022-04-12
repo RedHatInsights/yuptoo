@@ -1,6 +1,7 @@
 import json
 from yuptoo.lib.config import KAFKA_PRODUCER_OVERRIDE_MAX_REQUEST_SIZE
 
+
 def run(host: dict, transformed_obj: dict, request_obj: dict):
     """Delete installed_packages.
         Kafka message exceeds the maximum request size.

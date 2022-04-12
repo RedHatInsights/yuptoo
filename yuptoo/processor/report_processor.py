@@ -1,19 +1,24 @@
 import uuid
-import requests
 import importlib
 import tarfile
 import json
 from functools import partial
 from io import BytesIO
-from confluent_kafka import Producer, KafkaException
+from confluent_kafka import KafkaException
 
-from yuptoo.lib.config import get_logger, HOSTS_TRANSFORMATION_ENABLED, UPLOAD_TOPIC, INSIGHTS_KAFKA_ADDRESS, KAFKA_PRODUCER_OVERRIDE_MAX_REQUEST_SIZE, HOSTS_UPLOAD_FUTURES_COUNT
-from yuptoo.lib.exceptions import FailDownloadException, FailExtractException, QPCReportException, KafkaMsgHandlerError
+from yuptoo.lib.config import get_logger, HOSTS_TRANSFORMATION_ENABLED, UPLOAD_TOPIC, HOSTS_UPLOAD_FUTURES_COUNT
+from yuptoo.lib.exceptions import FailExtractException, QPCReportException, KafkaMsgHandlerError
 from yuptoo.validators.report_validator import validate_metadata_file
+from yuptoo.processor.utils import has_canonical_facts, print_transformed_info, download_report
 
 LOG = get_logger(__name__)
 
-def process_report(consumed_message):
+producer = None
+
+
+def process_report(consumed_message, p):
+    global producer
+    producer = p
     request_obj = {}
     prefix = 'PROCESS REPORT'
     request_obj['account'] = consumed_message.get('account')
@@ -22,8 +27,7 @@ def process_report(consumed_message):
     report_tar = download_report(consumed_message)
     report_json_files = extract_report_slices(report_tar, request_obj)
 
-
-    for report_slice in report_json_files:        
+    for report_slice in report_json_files:
         hosts = report_slice.get('hosts', [])
         total_hosts = len(hosts)
         count = 0
@@ -40,7 +44,7 @@ def process_report(consumed_message):
                     transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
                     from yuptoo.modifiers import get_modifiers
                     for modifier in get_modifiers():
-                        i = importlib.import_module('yuptoo.modifiers.'+modifier)
+                        i = importlib.import_module('yuptoo.modifiers.' + modifier)
                         i.run(host, transformed_obj, request_obj)
 
                 count += 1
@@ -52,7 +56,6 @@ def process_report(consumed_message):
                         prefix, count, total_hosts, request_obj['account'], request_obj['report_platform_id'])
             else:
                 hosts_without_facts.append({yupana_host_id: host})
-            
 
         if hosts_without_facts:
             invalid_hosts_message = \
@@ -70,48 +73,18 @@ def process_report(consumed_message):
         if not candidate_hosts:
             LOG.error(
                 'Report does not contain any valid hosts for account=%s and report_platform_id=%s.',
-                 request_obj['account'], request_obj['request_id'])
+                request_obj['account'], request_obj['request_id'])
             raise QPCReportException()
 
 
-def print_transformed_info(request_obj, host_id, transformed_obj):
-    """Print transformed logs."""
-    prefix = 'Printing Transformed Logs'
-    if transformed_obj is None:
-        return
-
-    log_sections = []
-    for key, value in transformed_obj.items():
-        if value:
-            log_sections.append('%s: %s' % (key, (',').join(value)))
-
-    if log_sections:
-        log_message = (
-            '%s - Transformed details host with id %s (request_id: %s) for account=%s and report_platform_id=%s. '
-        )
-        log_message += '\n'.join(log_sections)
-        LOG.info(
-            log_message, prefix, host_id, request_obj['request_id'], request_obj['account'], request_obj['report_platform_id']
-        )
-
-def has_canonical_facts(host):
-    CANONICAL_FACTS = ['insights_client_id', 'bios_uuid', 'ip_addresses', 'mac_addresses',
-                       'vm_uuid', 'etc_machine_id', 'subscription_manager_id']
-    for fact in CANONICAL_FACTS:
-        if host.get(fact):
-            return True
-
-    return False
-  
-
 def upload_to_host_inventory_via_kafka(host, request_obj):
-    prefix = 'UPLOAD TO INVENTORY VIA KAFKA'        
+    prefix = 'UPLOAD TO INVENTORY VIA KAFKA'
     try:  # pylint: disable=too-many-nested-blocks
         upload_msg = {
             'operation': 'add_host',
             'data': host,
             'platform_metadata': {'request_id': host['system_unique_id'],
-                                    'b64_identity': request_obj['b64_identity']}
+                                  'b64_identity': request_obj['b64_identity']}
         }
         send_message(upload_msg, request_obj['request_id'])
 
@@ -122,6 +95,7 @@ def upload_to_host_inventory_via_kafka(host, request_obj):
         raise KafkaMsgHandlerError(
             '%s - The following exception occurred: %s for account=%s and report_platform_id=%s.',
             prefix, err, host['account'], request_obj['report_platform_id'])
+
 
 def delivery_report(err, msg=None, request_id=None):
     prefix = 'PUBLISH TO INVENTORY TOPIC ON KAFKA'
@@ -142,58 +116,16 @@ def delivery_report(err, msg=None, request_id=None):
             request_id
         )
 
+
 def send_message(msg, request_id):
     try:
-
-        producer = Producer({
-            'bootstrap.servers': INSIGHTS_KAFKA_ADDRESS,
-            'message.max.bytes': KAFKA_PRODUCER_OVERRIDE_MAX_REQUEST_SIZE
-        })
-
         bytes = json.dumps(msg, ensure_ascii=False).encode("utf-8")
-
         producer.produce(UPLOAD_TOPIC, bytes, callback=partial(delivery_report, request_id=request_id))
         producer.poll(1)
     except KafkaException:
         LOG.exception(
             "Failed to produce message to [%s] topic: %s", UPLOAD_TOPIC, request_id
         )
-    finally:
-        producer.flush()
-
-
-def download_report(consumed_message):
-    """
-    Download report. Returns the tar binary content or None if there are errors.
-    """
-    prefix = 'REPORT DOWNLOAD'
-    try:
-        report_url = consumed_message.get('url', None)
-        if not report_url:
-            raise FailDownloadException(
-                '%s - Kafka message has no report url.  Message: %s',
-                prefix, consumed_message)
-
-        LOG.info(
-            '%s - Downloading Report from %s for account=%s.',
-            prefix, report_url, consumed_message.get('account'))
-
-        download_response = requests.get(report_url)
-
-        LOG.info(
-            '%s - Successfully downloaded TAR from %s for account=%s.',
-            prefix, report_url, consumed_message.get('account')
-        )
-        return download_response.content
-
-    except FailDownloadException as fail_err:
-        raise fail_err
-
-    except Exception as err:
-        raise FailDownloadException(
-            '%s - Unexpected error for URL %s. Error: %s',
-            prefix, report_url, err,
-            consumed_message.get('account'))
 
 
 def extract_report_slices(report_tar, request_obj):

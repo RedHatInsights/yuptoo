@@ -10,6 +10,7 @@ from yuptoo.lib.utils import format_message
 LOG = get_logger(__name__)
 LOG_PREFIX = 'QPC MESSAGE VALIDATOR'
 
+
 def validate_qpc_message(upload_message, consumer):
     """Handle the JSON report."""
 
@@ -17,7 +18,7 @@ def validate_qpc_message(upload_message, consumer):
         account = upload_message.get('account')
         LOG.info(
             '%s - Received record on %s topic for account %s.',
-                LOG_PREFIX, QPC_TOPIC, account)
+            LOG_PREFIX, QPC_TOPIC, account)
         try:
             missing_fields = []
             request_id = upload_message.get('request_id')
@@ -46,12 +47,13 @@ def validate_qpc_message(upload_message, consumer):
         except QPCKafkaMsgException as message_error:
             LOG.error(format_message(
                     LOG_PREFIX, 'Error processing records.  Message: %s, Error: %s' %
-                (upload_message, message_error)))
+                    (upload_message, message_error)))
             consumer.commit()
     else:
         LOG.debug(
             LOG_PREFIX,
             'Message not found on topic: %s', QPC_TOPIC)
+
 
 def check_if_url_expired(url, request_id):
     """Validate if url is expired."""

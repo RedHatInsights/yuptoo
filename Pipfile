@@ -9,3 +9,6 @@ requests = "*"
 
 [requires]
 python_version = "3.10"
+
+[dev-packages]
+flake8 = "*"

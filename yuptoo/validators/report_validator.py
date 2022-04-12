@@ -5,6 +5,7 @@ from yuptoo.lib.exceptions import FailExtractException
 
 LOG = get_logger(__name__)
 
+
 def validate_metadata_file(tar, metadata, request_obj):
     """Validate the contents of the metadata file.
     :param tar: the tarfile object.
@@ -36,7 +37,7 @@ def validate_metadata_file(tar, metadata, request_obj):
         prefix, metadata.name, request_obj['account'])
     metadata_json = json.loads(metadata_str)
     required_keys = ['report_id', 'host_inventory_api_version',
-                        'source', 'report_slices']
+                     'source', 'report_slices']
     missing_keys = []
     for key in required_keys:
         required_key = metadata_json.get(key)
