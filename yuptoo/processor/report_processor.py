@@ -32,6 +32,7 @@ def process_report(consumed_message, p):
     report_tar = download_report(consumed_message)
     report_json_files = extract_report_slices(report_tar, request_obj)
 
+    status = FAILURE_CONFIRM_STATUS
     for report_slice in report_json_files:
         hosts = report_slice.get('hosts', [])
         total_hosts = len(hosts)
