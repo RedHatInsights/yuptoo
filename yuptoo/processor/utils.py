@@ -1,4 +1,5 @@
 import requests
+from abc import ABC, abstractmethod
 
 from yuptoo.lib.exceptions import FailDownloadException
 from yuptoo.lib.config import get_logger
@@ -70,3 +71,10 @@ def download_report(consumed_message):
             '%s - Unexpected error for URL %s. Error: %s',
             prefix, report_url, err,
             consumed_message.get('account'))
+
+
+class Modifier(ABC):
+
+    @abstractmethod
+    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+        pass
