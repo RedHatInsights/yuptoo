@@ -1,12 +1,15 @@
 import uuid
 import importlib
+import inspect
 import tarfile
 import json
 from functools import partial
 from io import BytesIO
 from confluent_kafka import KafkaException
 
-from yuptoo.lib.config import get_logger, HOSTS_TRANSFORMATION_ENABLED, UPLOAD_TOPIC, HOSTS_UPLOAD_FUTURES_COUNT
+from yuptoo.lib.config import (get_logger, HOSTS_TRANSFORMATION_ENABLED,
+                               UPLOAD_TOPIC, HOSTS_UPLOAD_FUTURES_COUNT,
+                               VALIDATION_TOPIC)
 from yuptoo.lib.exceptions import FailExtractException, QPCReportException, KafkaMsgHandlerError
 from yuptoo.validators.report_validator import validate_metadata_file
 from yuptoo.processor.utils import has_canonical_facts, print_transformed_info, download_report
@@ -14,6 +17,8 @@ from yuptoo.processor.utils import has_canonical_facts, print_transformed_info, 
 LOG = get_logger(__name__)
 
 producer = None
+SUCCESS_CONFIRM_STATUS = 'success'
+FAILURE_CONFIRM_STATUS = 'failure'
 
 
 def process_report(consumed_message, p):
@@ -45,9 +50,19 @@ def process_report(consumed_message, p):
                     from yuptoo.modifiers import get_modifiers
                     for modifier in get_modifiers():
                         i = importlib.import_module('yuptoo.modifiers.' + modifier)
-                        i.run(host, transformed_obj, request_obj)
+                        for m in inspect.getmembers(i, inspect.isclass):
+                            if m[1].__module__ == i.__name__:
+                                m[1]().run(host, transformed_obj, request_obj)
 
                 count += 1
+                if candidate_hosts:
+                    status = SUCCESS_CONFIRM_STATUS
+                validation_message = {
+                    'hash': request_obj['request_id'],
+                    'request_id': request_obj['request_id'],
+                    'validation': status
+                }
+                send_message(VALIDATION_TOPIC, validation_message, request_obj['request_id'])
                 print_transformed_info(request_obj, host['yupana_host_id'], transformed_obj)
                 upload_to_host_inventory_via_kafka(host, request_obj)
                 if count % HOSTS_UPLOAD_FUTURES_COUNT == 0 or count == total_hosts:
@@ -86,7 +101,7 @@ def upload_to_host_inventory_via_kafka(host, request_obj):
             'platform_metadata': {'request_id': host['system_unique_id'],
                                   'b64_identity': request_obj['b64_identity']}
         }
-        send_message(upload_msg, request_obj['request_id'])
+        send_message(UPLOAD_TOPIC, upload_msg, request_obj['request_id'])
 
     except Exception as err:  # pylint: disable=broad-except
         LOG.error(
@@ -117,10 +132,10 @@ def delivery_report(err, msg=None, request_id=None):
         )
 
 
-def send_message(msg, request_id):
+def send_message(kafka_topic, msg, request_id):
     try:
         bytes = json.dumps(msg, ensure_ascii=False).encode("utf-8")
-        producer.produce(UPLOAD_TOPIC, bytes, callback=partial(delivery_report, request_id=request_id))
+        producer.produce(kafka_topic, bytes, callback=partial(delivery_report, request_id=request_id))
         producer.poll(1)
     except KafkaException:
         LOG.exception(

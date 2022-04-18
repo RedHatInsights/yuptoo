@@ -11,3 +11,4 @@ lib64
 tmp
 scripts/minio-conf/
 scripts/minio-data/
+temp/
