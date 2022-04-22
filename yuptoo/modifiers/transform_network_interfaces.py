@@ -2,7 +2,7 @@ from yuptoo.processor.utils import Modifier
 
 
 class TransformNetworkInterfaces(Modifier):
-    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+    def run(self, host: dict, transformed_obj: dict, **kwargs):
         """Transform 'system_profile.network_interfaces[]."""
         system_profile = host.get('system_profile', {})
         network_interfaces = system_profile.get('network_interfaces')

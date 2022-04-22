@@ -2,7 +2,7 @@ from yuptoo.processor.utils import Modifier
 
 
 class TransformOsKernalVersion(Modifier):
-    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+    def run(self, host: dict, transformed_obj: dict, **kwargs):
         """Transform 'system_profile.os_kernel_version' label."""
         system_profile = host.get('system_profile', {})
         os_kernel_version = system_profile.get('os_kernel_version')

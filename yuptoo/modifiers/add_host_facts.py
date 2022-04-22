@@ -11,7 +11,8 @@ prefix = 'ADD_HOST_FACTS'
 
 
 class TransformOsKernalVersion(Modifier):
-    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+    def run(self, host: dict, transformed_obj: dict, **kwargs):
+        request_obj = kwargs['request_obj']
         cert_cn = None
         try:
             raw_b64_identity = base64.b64decode(request_obj['b64_identity']).decode('utf-8')

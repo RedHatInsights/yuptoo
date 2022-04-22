@@ -9,7 +9,7 @@ OS_VS_ENUM = {'Red Hat': 'RHEL', 'CentOS': 'CentOS'}
 
 
 class TransformOsRelease(Modifier):
-    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+    def run(self, host: dict, transformed_obj: dict, **kwargs):
         """Transform 'system_profile.os_release' label."""
         system_profile = host.get('system_profile', {})
         os_release = system_profile.get('os_release')

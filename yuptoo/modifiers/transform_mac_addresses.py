@@ -2,7 +2,7 @@ from yuptoo.processor.utils import Modifier
 
 
 class TransformMacAddresses(Modifier):
-    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+    def run(self, host: dict, transformed_obj: dict, **kwargs):
         """Make values unique and remove empty 'mac_addresses' field."""
         mac_addresses = host.get('mac_addresses')
         if mac_addresses is None:

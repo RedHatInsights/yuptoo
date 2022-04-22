@@ -2,7 +2,7 @@ from yuptoo.processor.utils import Modifier
 
 
 class RemoveEmptyIpAddress(Modifier):
-    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+    def run(self, host: dict, transformed_obj: dict, **kwargs):
         """Remove 'ip_addresses' field."""
         ip_addresses = host.get('ip_addresses')
         if ip_addresses is None or ip_addresses:

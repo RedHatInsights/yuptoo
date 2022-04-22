@@ -53,7 +53,7 @@ def process_report(consumed_message, p):
                         i = importlib.import_module('yuptoo.modifiers.' + modifier)
                         for m in inspect.getmembers(i, inspect.isclass):
                             if m[1].__module__ == i.__name__:
-                                m[1]().run(host, transformed_obj, request_obj)
+                                m[1]().run(host, transformed_obj, request_obj=request_obj)
 
                 count += 1
                 if candidate_hosts:
