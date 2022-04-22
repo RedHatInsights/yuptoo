@@ -2,7 +2,7 @@ from yuptoo.processor.utils import Modifier
 
 
 class RemoveDisplayName(Modifier):
-    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+    def run(self, host: dict, transformed_obj: dict, **kwargs):
         """Remove 'display_name' field."""
         display_name = host.get('display_name')
         if display_name is not None:

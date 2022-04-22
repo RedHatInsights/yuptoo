@@ -12,7 +12,7 @@ from yuptoo.processor.utils import Modifier
 
 
 class <ClassName>(Modifier):
-    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+    def run(self, host: dict, transformed_obj: dict, **kwargs):
         // Write your code below
 
 

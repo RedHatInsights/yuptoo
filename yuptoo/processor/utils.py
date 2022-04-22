@@ -76,5 +76,5 @@ def download_report(consumed_message):
 class Modifier(ABC):
 
     @abstractmethod
-    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+    def run(self):
         pass

@@ -2,7 +2,7 @@ from yuptoo.processor.utils import Modifier
 
 
 class TransformTags(Modifier):
-    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+    def run(self, host: dict, transformed_obj: dict, **kwargs):
         tags = host.get('tags')
         if tags is None:
             return [host, transformed_obj]

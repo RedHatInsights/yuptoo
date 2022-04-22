@@ -3,7 +3,7 @@ from yuptoo.processor.utils import Modifier
 
 
 class RemoveInvalidBiosUUID(Modifier):
-    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+    def run(self, host: dict, transformed_obj: dict, **kwargs):
         """Remove invalid bios UUID."""
         uuid = host.get('bios_uuid')
         if uuid is None:

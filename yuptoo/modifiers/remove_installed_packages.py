@@ -5,7 +5,7 @@ from yuptoo.processor.utils import Modifier
 
 
 class RemoveInstalledPackages(Modifier):
-    def run(self, host: dict, transformed_obj: dict, request_obj: dict):
+    def run(self, host: dict, transformed_obj: dict, **kwargs):
         """Delete installed_packages.
             Kafka message exceeds the maximum request size.
         """
