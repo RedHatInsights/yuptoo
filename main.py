@@ -2,7 +2,7 @@ import json
 
 from confluent_kafka import KafkaException
 
-from yuptoo.lib.config import get_logger, KAFKA_AUTO_COMMIT
+from yuptoo.lib.config import get_logger, KAFKA_AUTO_COMMIT, QPC_TOPIC
 from yuptoo.validators.qpc_message_validator import validate_qpc_message
 from yuptoo.processor.report_processor import process_report
 from yuptoo.lib import consume, produce
@@ -12,6 +12,7 @@ LOG_PREFIX = 'REPORT CONSUMER'
 
 consumer = consume.init_consumer()
 producer = produce.init_producer()
+LOG.info(f"{LOG_PREFIX} - Started listening on kafka topic - {QPC_TOPIC}.")
 while True:
     msg = consumer.poll()
     if msg is None:
