@@ -8,14 +8,18 @@ Below are the instructions to setup yuptoo development environment.
    ```
    git clone https://github.com/RedHatInsights/yuptoo.git
    ```
-2. Spin up required containers/services.
+2. Install librdkafka and librdkafka-devel packages
+   ```
+   dnf install -y librdkafka librdkafka-devel
+   ```
+3. Spin up required containers/services.
    ```
    cd scripts/
    docker login quay.io
    . .env 
    docker-compose up
    ```
-3. Run the yuptoo service
+4. Run the yuptoo service
    ```
    pipenv install
    pipenv run python main.py
