@@ -8,7 +8,7 @@ sample-data:
 	mkdir -p temp/reports
 	mkdir -p temp/old_reports_temp
 	tar -xvzf sample.tar.gz -C temp/old_reports_temp
-	python scripts/change_uuids
+	python scripts/change_uuids.py
 	@NEW_FILENAME="sample_data_ready_$(shell date +%s).tar.gz"; \
 	cd temp; COPYFILE_DISABLE=1 tar -zcvf $$NEW_FILENAME reports; \
 	echo ""; \
