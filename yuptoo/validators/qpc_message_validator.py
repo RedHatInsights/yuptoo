@@ -1,5 +1,3 @@
-import pytz
-
 from datetime import datetime, timedelta
 from urllib.parse import parse_qs, urlparse
 
@@ -36,12 +34,6 @@ def validate_qpc_message(upload_message, consumer):
                         'Message missing required field(s): %s.' % ', '.join(missing_fields)))
 
             check_if_url_expired(url, request_id)
-            upload_message.update(
-                {
-                    'last_update_time': datetime.now(pytz.utc),
-                    'arrival_time': datetime.now(pytz.utc),
-                }
-            )
             return upload_message
 
         except QPCKafkaMsgException as message_error:

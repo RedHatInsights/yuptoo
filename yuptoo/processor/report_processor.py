@@ -11,7 +11,7 @@ from yuptoo.lib.config import (get_logger, HOSTS_TRANSFORMATION_ENABLED,
                                UPLOAD_TOPIC, HOSTS_UPLOAD_FUTURES_COUNT,
                                VALIDATION_TOPIC)
 from yuptoo.lib.exceptions import FailExtractException, QPCReportException, KafkaMsgHandlerError
-from yuptoo.validators.report_validator import validate_metadata_file
+from yuptoo.validators.report_metadata_validator import validate_metadata_file
 from yuptoo.processor.utils import has_canonical_facts, print_transformed_info, download_report
 
 LOG = get_logger(__name__)
