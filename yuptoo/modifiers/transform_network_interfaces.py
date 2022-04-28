@@ -6,27 +6,26 @@ class TransformNetworkInterfaces(Modifier):
         """Transform 'system_profile.network_interfaces[]."""
         system_profile = host.get('system_profile', {})
         network_interfaces = system_profile.get('network_interfaces')
-        if not network_interfaces:
-            return [host, transformed_obj]
-        filtered_nics = list(filter(lambda nic: nic.get('name'), network_interfaces))
-        increment_counts = {
-            'mtu': 0,
-            'ipv6_addresses': 0
-        }
-        filtered_nics = list({nic['name']: nic for nic in filtered_nics}.values())
-        for nic in filtered_nics:
-            increment_counts, nic = self.transform_mtu(
-                nic, increment_counts)
-            increment_counts, nic = self.transform_ipv6(
-                nic, increment_counts)
+        if network_interfaces:
+            filtered_nics = list(filter(lambda nic: nic.get('name'), network_interfaces))
+            increment_counts = {
+                'mtu': 0,
+                'ipv6_addresses': 0
+            }
+            filtered_nics = list({nic['name']: nic for nic in filtered_nics}.values())
+            for nic in filtered_nics:
+                increment_counts, nic = self.transform_mtu(
+                    nic, increment_counts)
+                increment_counts, nic = self.transform_ipv6(
+                    nic, increment_counts)
 
-        modified_fields = [
-            field for field, count in increment_counts.items() if count > 0
-        ]
-        if len(modified_fields) > 0:
-            transformed_obj['modified'].extend(modified_fields)
+            modified_fields = [
+                field for field, count in increment_counts.items() if count > 0
+            ]
+            if len(modified_fields) > 0:
+                transformed_obj['modified'].extend(modified_fields)
 
-        host['system_profile']['network_interfaces'] = filtered_nics
+            host['system_profile']['network_interfaces'] = filtered_nics
 
     def transform_mtu(self, nic: dict, increment_counts: dict):
         """Transform 'system_profile.network_interfaces[]['mtu'] to Integer."""

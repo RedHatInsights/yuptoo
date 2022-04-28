@@ -6,10 +6,7 @@ class RemoveInvalidBiosUUID(Modifier):
     def run(self, host: dict, transformed_obj: dict, **kwargs):
         """Remove invalid bios UUID."""
         uuid = host.get('bios_uuid')
-        if uuid is None:
-            return [host, transformed_obj]
-
-        if not self.is_valid_uuid(uuid):
+        if (uuid and not self.is_valid_uuid(uuid)) or uuid == '':
             transformed_obj['removed'].append('invalid uuid: %s' % uuid)
             del host['bios_uuid']
 
