@@ -13,41 +13,35 @@ class TransformOsRelease(Modifier):
         """Transform 'system_profile.os_release' label."""
         system_profile = host.get('system_profile', {})
         os_release = system_profile.get('os_release')
-        if not isinstance(os_release, str):
-            return [host, transformed_obj]
+        if isinstance(os_release, str):
+            os_details = self.match_regex_and_find_os_details(os_release)
 
-        os_details = self.match_regex_and_find_os_details(os_release)
+            # Removed logging from here as no other method has logging
+            # inside it's definition
 
-        # Removed logging from here as no other method has logging
-        # inside it's definition
+            if os_details and os_details['major']:
+                host['system_profile']['os_release'] = os_details['version']
 
-        if not os_details or not os_details['major']:
-            del host['system_profile']['os_release']
-            transformed_obj['removed'].append('empty os_release')
-            return [host, transformed_obj]
+                os_enum = next((
+                    value for key, value in OS_VS_ENUM.items()
+                    if key.lower() in os_details['name'].lower()), None)
+                if os_enum:
+                    host['system_profile']['operating_system'] = {
+                        'major': os_details['major'],
+                        'minor': os_details['minor'],
+                        'name': os_enum
+                    }
+                else:
+                    transformed_obj['missing_data'].append(
+                        "operating system info for os release '%s'" % os_release
+                    )
 
-        host['system_profile']['os_release'] = os_details['version']
-
-        os_enum = next((
-            value for key, value in OS_VS_ENUM.items()
-            if key.lower() in os_details['name'].lower()), None)
-        if os_enum:
-            host['system_profile']['operating_system'] = {
-                'major': os_details['major'],
-                'minor': os_details['minor'],
-                'name': os_enum
-            }
-        else:
-            transformed_obj['missing_data'].append(
-                "operating system info for os release '%s'" % os_release
-            )
-
-        if os_release == os_details['version']:
-            return [host, transformed_obj]
-
-        transformed_obj['modified'].append(
-            "os_release from '%s' to '%s'" %
-            (os_release, os_details['version']))
+                transformed_obj['modified'].append(
+                    "os_release from '%s' to '%s'" %
+                    (os_release, os_details['version']))
+            else:
+                del host['system_profile']['os_release']
+                transformed_obj['removed'].append('empty os_release')
 
     def match_regex_and_find_os_details(self, os_release):
         """Match Regex with os_release and return os_details."""

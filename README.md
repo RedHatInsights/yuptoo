@@ -13,7 +13,7 @@
 ## Usage
 
 ```python
-pipenv install
+pipenv install --dev
 pipenv run python main.py
 ```
 
@@ -21,6 +21,18 @@ pipenv run python main.py
 Yuptoo has the concept of modifiers which are used for manipulating host data before sending it to host inventory.
 
 Read more about modifiers - [yuptoo/modifiers](https://github.com/RedHatInsights/yuptoo/tree/main/yuptoo/modifiers)
+
+## Testing and Linting
+
+To run pytest hit the below command in yuptoo root directory
+```
+pipenv run python -m pytest
+```
+
+For linting run the below command. 
+```
+pipenv run flake8
+```
 
 ## Dev Environment
 For dev environment setup check - [doc/dev_environment.md](https://github.com/RedHatInsights/yuptoo/blob/main/doc/dev_environment.md)

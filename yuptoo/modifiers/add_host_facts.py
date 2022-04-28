@@ -10,7 +10,7 @@ LOG = get_logger(__name__)
 prefix = 'ADD_HOST_FACTS'
 
 
-class TransformOsKernalVersion(Modifier):
+class AddHostFacts(Modifier):
     def run(self, host: dict, transformed_obj: dict, **kwargs):
         request_obj = kwargs['request_obj']
         cert_cn = None
@@ -44,7 +44,6 @@ class TransformOsKernalVersion(Modifier):
 
     def get_stale_time(self, request_obj):
         """Compute the stale date based on the host source."""
-
         ttl = int(DISCOVERY_HOST_TTL)
         if request_obj['source'] == 'satellite':
             ttl = int(SATELLITE_HOST_TTL)
