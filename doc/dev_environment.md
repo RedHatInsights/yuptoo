@@ -38,7 +38,7 @@ make local-upload-data file=temp/sample_data_ready_******.tar.gz
 
 Commands for monitoring kafka topic
 
-```bash
-# docker-compose exec kafka kafka-console-consumer --topic=platform.upload.qpc --bootstrap-server=localhost:29092
-# docker-compose exec kafka kafka-console-consumer --topic=platform.inventory.host-ingress --bootstrap-server=localhost:29092
+```
+docker-compose exec kafka kafka-console-consumer --topic=platform.upload.qpc --bootstrap-server=localhost:29092
+docker-compose exec kafka kafka-console-consumer --topic=platform.inventory.host-ingress --bootstrap-server=localhost:29092
 ```
