@@ -46,8 +46,8 @@ def process_report(consumed_message, p):
                 host['report_slice_id'] = report_slice.get('report_slice_id')
                 candidate_hosts.append({yupana_host_id: host})
                 # Run modifier below
+                transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
                 if HOSTS_TRANSFORMATION_ENABLED:
-                    transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
                     from yuptoo.modifiers import get_modifiers
                     for modifier in get_modifiers():
                         i = importlib.import_module('yuptoo.modifiers.' + modifier)
@@ -71,7 +71,7 @@ def process_report(consumed_message, p):
                         '%s - Sending %s/%s hosts to the inventory service for account=%s and report_platform_id=%s.',
                         prefix, count, total_hosts, request_obj['account'], request_obj['report_platform_id'])
             else:
-                hosts_without_facts.append({yupana_host_id: host})
+                hosts_without_facts.append({report_slice.get('report_slice_id'): host})
 
         if hosts_without_facts:
             invalid_hosts_message = \

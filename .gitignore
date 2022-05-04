@@ -8,6 +8,7 @@ lib/*
 lib64
 .scannerwork
 .envs
+.coverage
 tmp
 scripts/minio-conf/
 scripts/minio-data/

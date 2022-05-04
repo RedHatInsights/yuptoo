@@ -9,7 +9,7 @@ LOG = get_logger(__name__)
 LOG_PREFIX = 'QPC MESSAGE VALIDATOR'
 
 
-def validate_qpc_message(upload_message, consumer):
+def validate_qpc_message(upload_message):
     """Handle the JSON report."""
 
     if upload_message.get('topic') == QPC_TOPIC:
@@ -17,30 +17,24 @@ def validate_qpc_message(upload_message, consumer):
         LOG.info(
             '%s - Received record on %s topic for account %s.',
             LOG_PREFIX, QPC_TOPIC, account)
-        try:
-            missing_fields = []
-            request_id = upload_message.get('request_id')
-            url = upload_message.get('url')
-            if not account:
-                missing_fields.append('account')
-            if not request_id:
-                missing_fields.append('request_id')
-            if not url:
-                missing_fields.append('url')
-            if missing_fields:
-                raise QPCKafkaMsgException(
-                    format_message(
-                        LOG_PREFIX,
-                        'Message missing required field(s): %s.' % ', '.join(missing_fields)))
 
-            check_if_url_expired(url, request_id)
-            return upload_message
+        missing_fields = []
+        request_id = upload_message.get('request_id')
+        url = upload_message.get('url')
+        if not account:
+            missing_fields.append('account')
+        if not request_id:
+            missing_fields.append('request_id')
+        if not url:
+            missing_fields.append('url')
+        if missing_fields:
+            raise QPCKafkaMsgException(
+                format_message(
+                    LOG_PREFIX,
+                    'Message missing required field(s): %s.' % ', '.join(missing_fields)))
 
-        except QPCKafkaMsgException as message_error:
-            LOG.error(format_message(
-                    LOG_PREFIX, 'Error processing records.  Message: %s, Error: %s' %
-                    (upload_message, message_error)))
-            consumer.commit()
+        check_if_url_expired(url, request_id)
+        return upload_message
     else:
         LOG.debug(
             LOG_PREFIX,
