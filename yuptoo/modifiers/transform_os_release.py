@@ -16,9 +16,6 @@ class TransformOsRelease(Modifier):
         if isinstance(os_release, str):
             os_details = self.match_regex_and_find_os_details(os_release)
 
-            # Removed logging from here as no other method has logging
-            # inside it's definition
-
             if os_details and os_details['major']:
                 host['system_profile']['os_release'] = os_details['version']
 
