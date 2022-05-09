@@ -35,5 +35,5 @@ pipenv run flake8
 ```
 
 ## Dev Environment
-For dev environment setup check - [doc/dev_environment.md](https://github.com/RedHatInsights/yuptoo/blob/main/doc/dev_environment.md)
+For dev environment setup check - [docs/dev_environment.md](https://github.com/RedHatInsights/yuptoo/blob/main/docs/dev_environment.md)
 
