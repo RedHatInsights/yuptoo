@@ -6,6 +6,7 @@ verify_ssl = true
 [packages]
 confluent-kafka = "*"
 requests = "*"
+app-common-python = "*"
 
 [requires]
 python_version = "3.9"

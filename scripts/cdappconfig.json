@@ -1,0 +1,24 @@
+{
+    "kafka": {
+        "brokers": [
+            {
+                "hostname": "kafka",
+                "port": 29092
+            }
+        ],
+        "topics": [
+            {
+                "requestedName": "platform.upload.qpc",
+                "name": "platform.upload.qpc"
+            },
+            {
+                "requestedName": "platform.inventory.host-ingress",
+                "name": "platform.inventory.host-ingress"
+            },
+            {
+                "requestedName": "platform.upload.validation",
+                "name": "platform.upload.validation"
+            }
+        ]
+    }
+}
