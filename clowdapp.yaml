@@ -1,0 +1,76 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: yuptoo
+objects:
+- apiVersion: cloud.redhat.com/v1alpha1
+  kind: ClowdApp
+  metadata:
+    name: yuptoo
+  spec:
+    envName: ${ENV_NAME}
+    dependencies:
+    - ingress
+    deployments:
+    - name: yuptoo-service
+      podSpec:
+        image: ${IMAGE}:${IMAGE_TAG}
+        minReplicas: ${{MIN_REPLICAS}}
+        command: ["sh"]
+        args: ["-c", "python -m main"]
+        resources:
+          requests:
+            cpu: ${CPU_REQUEST}
+            memory: ${MEMORY_REQUEST}
+          limits:
+            cpu: ${CPU_LIMIT}
+            memory: ${MEMORY_LIMIT}
+        env:
+          - name: CLOWDER_ENABLED
+            value: ${CLOWDER_ENABLED}
+    kafkaTopics:
+      - topicName: platform.upload.qpc
+        partitions: 1
+      - topicName: platform.inventory.host-ingress
+        partitions: 1
+      - topicName: platform.upload.validation
+        partitions: 1
+
+parameters:
+- description : ClowdEnvironment name
+  name: ENV_NAME
+  required: true
+- description: min replicas
+  name: MIN_REPLICAS
+  value: "1"
+- description: Image NAME
+  name: IMAGE
+  required: true
+  value: quay.io/cloudservices/yuptoo
+- description: Image tag
+  name: IMAGE_TAG
+  required: true
+- description: Initial cpu request.
+  displayName: CPU Request
+  name: CPU_REQUEST
+  required: true
+  value: 500m
+- description: Initial amount of memory the container will request.
+  displayName: Memory Request
+  name: MEMORY_REQUEST
+  required: true
+  value: 1Gi
+- description: Maximum amount of memory the Django container can use.
+  displayName: Memory Limit
+  name: MEMORY_LIMIT
+  required: true
+  value: 1Gi
+- description: Maximum amount of CPU the build container can use.
+  displayName: CPU Limit
+  name: CPU_LIMIT
+  required: true
+  value: '1'
+- description: Is clowder enabled
+  name: CLOWDER_ENABLED
+  value: "True"
