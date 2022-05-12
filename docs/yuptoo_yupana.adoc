@@ -1,0 +1,12 @@
+== Yuptoo (Yupana Upload Processor II)
+
+Yuptoo is a rewrite of yupana service. Below are a key differences and improvement made in yuptoo. 
+
+* No Database - database dependence has been completely removed.
+* No multi-threading.
+* No explicit state-machine.
+* Reduced iteration over the report/hosts. Yuptoo has single iteration for validation and modification.
+* Removed django or any other http service.
+* Made yuptoo more modular and pluggable. check https://github.com/RedHatInsights/yuptoo/blob/main/yuptoo/modifiers/README.md[README.md]
+* Increased code coverage.
+* Less dependent on third party packages.
