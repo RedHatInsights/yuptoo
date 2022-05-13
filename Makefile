@@ -33,3 +33,7 @@ sample-data:
 	echo ""; \
 	rm -rf reports; \
 	rm -rf old_reports_temp
+
+runtest:
+	pipenv run python -m pytest --cov=yuptoo tests/
+	pipenv run flake8

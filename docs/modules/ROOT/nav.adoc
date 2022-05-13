@@ -1,0 +1,4 @@
+* xref:index.adoc[Yuptoo]
+* xref:local_environment.adoc[Local Deployment]
+* xref:ephemeral_environment.adoc[Ephemeral Env Deployment]
+* xref:yuptoo_yupana.adoc[Yuptoo - Yupana]

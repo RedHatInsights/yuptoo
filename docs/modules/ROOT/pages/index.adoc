@@ -4,23 +4,11 @@ A client(rh-cloud-plugin/satellite) will create a specially crafted tarball and 
 https://github.com/RedHatInsights/yuptoo[Code Repository]
 
 == Architecture Diagram
-image::images/yuptoo.png[Architecture]
+image::yuptoo.png[]
 
 == How It Works
 The following sequence diagram shows the data flow and processing of payload recevied on `platform.upload.qpc` kafka topic.
 
-image::images/sequence_diagram.png[]
+image::sequence_diagram.png[]
 
 ---
-
-=== Dev Environment Setup
-
-|===
-|Environment |Document 
-
-|Local
-|https://github.com/RedHatInsights/yuptoo/blob/main/docs/local_environment.adoc[local_environment doc]
-
-|Ephemeral Environment
-|https://github.com/RedHatInsights/yuptoo/blob/main/docs/ephemeral_environment.adoc[ ephemeral_environment doc]
-|===
