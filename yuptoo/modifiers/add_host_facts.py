@@ -19,8 +19,7 @@ class AddHostFacts(Modifier):
             identity = json.loads(raw_b64_identity)
             cert_cn = identity['identity']['system']['cn']
         except KeyError as err:
-            LOG.error(
-                prefix, 'Invalid identity. Key not found: %s', err)
+            LOG.error(f"{prefix} - Invalid identity. Key not found: {err}")
 
         unique_id_base = '{}:{}:'.format(request_obj['request_id'],
                                          request_obj['report_platform_id'])

@@ -16,7 +16,7 @@ consumer = consume.init_consumer()
 producer = produce.init_producer()
 LOG.info(f"{LOG_PREFIX} - Started listening on kafka topic - {QPC_TOPIC}.")
 while True:
-    msg = consumer.poll()
+    msg = consumer.poll(1.0)
     if msg is None:
         continue
     if msg.error():
@@ -47,6 +47,7 @@ while True:
             LOG_PREFIX
         )
     finally:
-        producer.flush()
         if not KAFKA_AUTO_COMMIT:
             consumer.commit()
+        consumer.close()
+        producer.flush()
