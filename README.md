@@ -33,7 +33,3 @@ For linting run the below command.
 ```
 pipenv run flake8
 ```
-
-## Dev Environment
-For dev environment setup check - [docs/dev_environment.md](https://github.com/RedHatInsights/yuptoo/blob/main/docs/dev_environment.md)
-
