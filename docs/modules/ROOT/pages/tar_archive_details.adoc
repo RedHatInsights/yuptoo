@@ -1,6 +1,6 @@
 = Yuptoo specific tar archive
 
-Yuptoo requires a specially formatted tar.gz file. Files that do not conform to the required format will be marked as invalid and no processing will occur. The tar.gz file must contain a metadata JSON file and one or more report slice JSON files. The file that contains metadata information is named metadata.json, while the files containing host data are named with their uniquely generated UUID4 report_slice_id followed by the .json extension.
+Yuptoo requires a specially formatted tar archive file. Files that do not conform to the required format will be marked as invalid and no processing will occur. The tar file must contain a metadata JSON file and one or more report slice JSON files. The file that contains metadata information is named metadata.json, while the files containing host data are named with their uniquely generated UUID4 report_slice_id followed by the .json extension.
 
 [source]
 [root@fedora]$ tar -tf report_sat_6_9_beta.tar.gz
@@ -11,7 +11,7 @@ Yuptoo requires a specially formatted tar.gz file. Files that do not conform to 
 
 == Yuptoo Meta-data JSON Format
 
-Metadata should include information about the sender of the data, Host Inventory API version, and the report slices included in the tar.gz file. Below is a sample metadata section for a report with 2 slices:
+Metadata should include information about the sender of the data, Host Inventory API version, and the report slices included in the tar file. Below is a sample metadata section for a report with 2 slices:
 
 [source,json]
 {

@@ -1,10 +1,10 @@
 = Ephemeral Environment.
 
-First make sure one has the access to ephemeral cluster and has bonfire and oc binary install in the PATH. For more details regarding getting access and downloading oc and bonfire binary please go through the doc - https://consoledot.pages.redhat.com/docs/dev/getting-started/ephemeral/onboarding.html[Onboarding to the Ephemeral Cluster]
+First make sure you have access to the ephemeral cluster and install a bonfire and oc binary in the PATH. For more details regarding getting access and setup, please go through the documentation -  https://consoledot.pages.redhat.com/docs/dev/getting-started/ephemeral/onboarding.html[Onboarding to the Ephemeral Cluster]
 
 == Run Yuptoo in Ephemeral Environment.
 
-Login to the cluster by grabbing a login command from https://oauth-openshift.apps.c-rh-c-eph.8p0c.p1.openshiftapps.com/oauth/token/request[token request page] for the ephemeral cluster
+Login to the ephemeral cluster by grabbing a login command from https://oauth-openshift.apps.c-rh-c-eph.8p0c.p1.openshiftapps.com/oauth/token/request[token request page]
 ----
 oc login --token=sha256~xxxxxx --server=https://api.c-rh-c-eph.8p0c.p1.openshiftapps.com:6443
 ----
@@ -13,9 +13,9 @@ Run bonfire command to reserve the ephemeral namespace and to deploy yuptoo in t
 ----
 bonfire deploy yuptoo
 ----
-Above command will return the name of namespace which has been reserved, make a note of it. 
+Note down the name of reserved namespace from the output of above bonfire command. 
 
-To check if all the pods are running below command can be used. 
+Make sure all the pods are running. One can use below command to verify it. 
 ----
 oc get pods -n <reserved-namespace>
 ----
