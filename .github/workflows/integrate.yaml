@@ -1,0 +1,56 @@
+
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+    Lint:
+      runs-on: ubuntu-latest
+
+      steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install pipenv and all dependencies for Yuptoo
+        run: |
+            pip install pipenv
+            pipenv install --dev
+
+      - name: Lint with flake8
+        run: |
+            pipenv run flake8
+    
+    Test:
+      runs-on: ubuntu-latest
+
+      steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install pipenv and all dependencies for Yuptoo
+        run: |
+            pip install pipenv
+            pipenv install --dev
+
+      - name: Test with pytest
+        run: |
+            pipenv run python -m pytest --cov=yuptoo tests
+
+
+
