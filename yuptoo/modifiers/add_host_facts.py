@@ -1,12 +1,12 @@
 import json
 import base64
 
-from yuptoo.lib.config import get_logger
+from yuptoo.lib import logger as LOG
 from yuptoo.lib.config import DISCOVERY_HOST_TTL, SATELLITE_HOST_TTL
 from datetime import datetime, timedelta
 from yuptoo.processor.utils import Modifier
 
-LOG = get_logger(__name__)
+LOG.set_logger_name(__name__)
 prefix = 'ADD_HOST_FACTS'
 
 
@@ -19,7 +19,7 @@ class AddHostFacts(Modifier):
             identity = json.loads(raw_b64_identity)
             cert_cn = identity['identity']['system']['cn']
         except KeyError as err:
-            LOG.error(f"{prefix} - Invalid identity. Key not found: {err}")
+            LOG.debug(f"{prefix} - Invalid identity. Key not found: {err}")
 
         unique_id_base = '{}:{}:'.format(request_obj['request_id'],
                                          request_obj['report_platform_id'])

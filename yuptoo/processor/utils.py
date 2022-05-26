@@ -2,14 +2,11 @@ import requests
 from abc import ABC, abstractmethod
 
 from yuptoo.lib.exceptions import FailDownloadException
-from yuptoo.lib.config import get_logger
-
-LOG = get_logger(__name__)
+from yuptoo.lib import logger as LOG
 
 
 def print_transformed_info(request_obj, host_id, transformed_obj):
     """Print transformed logs."""
-    prefix = 'Printing Transformed Logs'
     if transformed_obj is None:
         return
 
@@ -19,14 +16,9 @@ def print_transformed_info(request_obj, host_id, transformed_obj):
             log_sections.append('%s: %s' % (key, (',').join(value)))
 
     if log_sections:
-        log_message = (
-            '%s - Transformed details host with id %s (request_id: %s) for account=%s and report_platform_id=%s. '
-        )
+        log_message = f"Transformed details host with id {host_id} "
         log_message += '\n'.join(log_sections)
-        LOG.info(
-            log_message, prefix, host_id, request_obj['request_id'],
-            request_obj['account'], request_obj['report_platform_id']
-        )
+        LOG.info(log_message)
 
 
 def has_canonical_facts(host):
@@ -43,24 +35,18 @@ def download_report(consumed_message):
     """
     Download report. Returns the tar binary content or None if there are errors.
     """
-    prefix = 'REPORT DOWNLOAD'
     try:
         report_url = consumed_message.get('url', None)
         if not report_url:
             raise FailDownloadException(
-                '%s - Kafka message has no report url.  Message: %s',
-                prefix, consumed_message)
+                f"Kafka message has no report url.  Message: {consumed_message}"
+            )
 
-        LOG.info(
-            '%s - Downloading Report from %s for account=%s.',
-            prefix, report_url, consumed_message.get('account'))
+        LOG.info(f"Downloading Report from {report_url}")
 
         download_response = requests.get(report_url)
 
-        LOG.info(
-            '%s - Successfully downloaded TAR from %s for account=%s.',
-            prefix, report_url, consumed_message.get('account')
-        )
+        LOG.info(f"Successfully downloaded TAR from {report_url}")
         return download_response.content
 
     except FailDownloadException as fail_err:
@@ -68,9 +54,8 @@ def download_report(consumed_message):
 
     except Exception as err:
         raise FailDownloadException(
-            '%s - Unexpected error for URL %s. Error: %s',
-            prefix, report_url, err,
-            consumed_message.get('account'))
+            f"Unexpected error for URL {report_url}. Error: {err}"
+        )
 
 
 class Modifier(ABC):

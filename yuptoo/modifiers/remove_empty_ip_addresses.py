@@ -1,8 +1,7 @@
 from yuptoo.processor.utils import Modifier
-from yuptoo.lib.config import get_logger
+from yuptoo.lib import logger as LOG
 
-LOG = get_logger(__name__)
-LOG_PREFIX = 'RemoveEmptyIpAddress'
+LOG.set_logger_name(__name__)
 
 
 class RemoveEmptyIpAddress(Modifier):
@@ -14,4 +13,4 @@ class RemoveEmptyIpAddress(Modifier):
                 del host['ip_addresses']
                 transformed_obj['removed'].append('empty ip_addresses')
             except KeyError:
-                LOG.info(f'{LOG_PREFIX} - ipaddress field is not present in host object')
+                LOG.debug("ipaddress field is not present in host object")

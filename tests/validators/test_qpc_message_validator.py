@@ -32,9 +32,9 @@ def test_validate_qpc_message_without_account():
 def test_qpc_message_without_topic():
     qpc_msg = {'url': payload_url, 'request_id': '234332',
                'b64_identity': b64_identity}
-    with patch('yuptoo.validators.qpc_message_validator.LOG.debug') as mock:
+    with patch('yuptoo.validators.qpc_message_validator.LOG.error') as mock:
         validate_qpc_message(qpc_msg)
-    mock.assert_called_once_with('QPC MESSAGE VALIDATOR', 'Message not found on topic: %s', QPC_TOPIC)
+    mock.assert_called_once_with(f"Message not found on topic: {QPC_TOPIC}")
 
 
 def test_check_if_url_expired():
