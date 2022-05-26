@@ -49,5 +49,4 @@ while True:
     finally:
         if not KAFKA_AUTO_COMMIT:
             consumer.commit()
-        consumer.close()
         producer.flush()
