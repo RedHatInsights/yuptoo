@@ -1,8 +1,7 @@
 from yuptoo.processor.utils import Modifier
-from yuptoo.lib.config import get_logger
+from yuptoo.lib import logger as LOG
 
-LOG = get_logger(__name__)
-LOG_PREFIX = 'TransformMacAddresses'
+LOG.set_logger_name(__name__)
 
 
 class TransformMacAddresses(Modifier):
@@ -18,4 +17,4 @@ class TransformMacAddresses(Modifier):
                 del host['mac_addresses']
                 transformed_obj['removed'].append('empty mac_addresses')
             except KeyError:
-                LOG.info(f'{LOG_PREFIX} - Mac address is not present in host object')
+                LOG.debug("Mac address is not present in host object")

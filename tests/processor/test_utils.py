@@ -10,15 +10,11 @@ def test_print_transformed_info():
     transformed_obj = {'removed': [], 'modified': ['test'], 'missing_data': []}
     with patch('yuptoo.processor.utils.LOG.info') as mock:
         print_transformed_info(request_obj, host_id, transformed_obj)
-    prefix = 'Printing Transformed Logs'
     log_sections = ['modified: test']
-    log_message = (
-        '%s - Transformed details host with id %s (request_id: %s) for account=%s and report_platform_id=%s. '
-    )
+    log_message = f"Transformed details host with id {host_id} "
     log_message += '\n'.join(log_sections)
     mock.assert_called_once_with(
-            log_message, prefix, host_id, request_obj['request_id'],
-            request_obj['account'], request_obj['report_platform_id']
+            log_message
         )
 
 
