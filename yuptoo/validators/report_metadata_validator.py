@@ -1,9 +1,9 @@
 import json
-
+import logging
 from yuptoo.lib.config import MAX_HOSTS_PER_REP
 from yuptoo.lib.exceptions import FailExtractException
 
-from yuptoo.lib import logger as LOG
+LOG = logging.getLogger(__name__)
 
 
 def validate_metadata_file(tar, metadata, request_obj):

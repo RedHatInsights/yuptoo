@@ -1,7 +1,7 @@
 from yuptoo.processor.utils import Modifier
-from yuptoo.lib import logger as LOG
+import logging
 
-LOG.set_logger_name(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class TransformMacAddresses(Modifier):

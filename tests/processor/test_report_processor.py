@@ -35,13 +35,14 @@ def test_process_report_without_facts():
         "url": f"http://minio:9000/insights-upload-perma?X-Amz-Date=\
                 {datetime.now().strftime('%Y%m%dT%H%M%SZ')}&X-Amz-Expires=86400"
     }
+    request_object = {}
     buffer_content = create_tar_buffer(report_files)
     producer = Mock()
     with patch('yuptoo.processor.report_processor.download_report', return_value=buffer_content):
         with patch('yuptoo.processor.report_processor.HOSTS_TRANSFORMATION_ENABLED', 0):
             with patch('yuptoo.processor.report_processor.has_canonical_facts', return_value=0):
                 with pytest.raises(QPCReportException):
-                    process_report(consumed_message, producer)
+                    process_report(consumed_message, producer, request_object)
 
 
 def test_process_report():
@@ -71,12 +72,13 @@ def test_process_report():
         "url": f"http://minio:9000/insights-upload-perma?X-Amz-Date=\
                 {datetime.now().strftime('%Y%m%dT%H%M%SZ')}&X-Amz-Expires=86400"
     }
+    request_object = {'request_id': consumed_message['request_id']}
     buffer_content = create_tar_buffer(report_files)
     producer = Mock()
     with patch('yuptoo.processor.report_processor.upload_to_host_inventory_via_kafka', return_value=None) as mock:
         with patch('yuptoo.processor.report_processor.download_report', return_value=buffer_content):
             with patch('yuptoo.processor.report_processor.HOSTS_TRANSFORMATION_ENABLED', 0):
-                process_report(consumed_message, producer)
+                process_report(consumed_message, producer, request_object)
     mock.assert_called_once
 
 

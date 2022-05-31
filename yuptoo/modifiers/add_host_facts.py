@@ -1,12 +1,12 @@
 import json
 import base64
+import logging
 
-from yuptoo.lib import logger as LOG
 from yuptoo.lib.config import DISCOVERY_HOST_TTL, SATELLITE_HOST_TTL
 from datetime import datetime, timedelta
 from yuptoo.processor.utils import Modifier
 
-LOG.set_logger_name(__name__)
+LOG = logging.getLogger(__name__)
 prefix = 'ADD_HOST_FACTS'
 
 
