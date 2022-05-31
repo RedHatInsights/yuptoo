@@ -1,10 +1,11 @@
+import logging
 from datetime import datetime, timedelta
 from urllib.parse import parse_qs, urlparse
 
 from yuptoo.lib.config import QPC_TOPIC
 from yuptoo.lib.exceptions import QPCKafkaMsgException
 
-from yuptoo.lib import logger as LOG
+LOG = logging.getLogger(__name__)
 
 
 def validate_qpc_message(upload_message):
@@ -26,7 +27,13 @@ def validate_qpc_message(upload_message):
             raise QPCKafkaMsgException(f"Message missing required field(s): {', '.join(missing_fields)}.")
 
         check_if_url_expired(url, request_id)
-        return upload_message
+        request_obj = {
+            'request_id': request_id,
+            'account': account,
+            'org_id': upload_message.get('org_id'),
+            'b64_identity': upload_message.get('b64_identity')
+        }
+        return request_obj
     else:
         LOG.error(f"Message not found on topic: {QPC_TOPIC}")
 

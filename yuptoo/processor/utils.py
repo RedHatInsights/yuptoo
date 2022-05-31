@@ -2,7 +2,9 @@ import requests
 from abc import ABC, abstractmethod
 
 from yuptoo.lib.exceptions import FailDownloadException
-from yuptoo.lib import logger as LOG
+import logging
+
+LOG = logging.getLogger(__name__)
 
 
 def print_transformed_info(request_obj, host_id, transformed_obj):

@@ -3,6 +3,7 @@ import importlib
 import inspect
 import tarfile
 import json
+import logging
 from io import BytesIO
 from confluent_kafka import KafkaException
 
@@ -11,24 +12,17 @@ from yuptoo.lib.config import (HOSTS_TRANSFORMATION_ENABLED,
 from yuptoo.lib.exceptions import FailExtractException, QPCReportException
 from yuptoo.validators.report_metadata_validator import validate_metadata_file
 from yuptoo.processor.utils import has_canonical_facts, print_transformed_info, download_report
-from yuptoo.lib import logger as LOG
 
+LOG = logging.getLogger(__name__)
 
 producer = None
 SUCCESS_CONFIRM_STATUS = 'success'
 FAILURE_CONFIRM_STATUS = 'failure'
 
 
-def process_report(consumed_message, p):
+def process_report(consumed_message, p, request_obj):
     global producer
     producer = p
-    LOG.set_logger_name(__name__)
-    request_obj = {}
-    request_obj['account'] = consumed_message.get('account')
-    request_obj['org_id'] = consumed_message.get('org_id')
-    request_obj['b64_identity'] = consumed_message.get('b64_identity')
-    request_obj['request_id'] = consumed_message.get('request_id')
-    LOG.set_request_object(request_obj)
     report_tar = download_report(consumed_message)
     report_json_files = extract_report_slices(report_tar, request_obj)
 
@@ -64,8 +58,6 @@ def process_report(consumed_message, p):
                     'request_id': request_obj['request_id'],
                     'validation': status
                 }
-                # Reset the logger name once running all the modifiers
-                LOG.set_logger_name(__name__)
                 send_message(VALIDATION_TOPIC, validation_message)
                 print_transformed_info(request_obj, host['yupana_host_id'], transformed_obj)
                 upload_to_host_inventory_via_kafka(host, request_obj)

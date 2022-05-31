@@ -30,3 +30,9 @@ class QPCKafkaMsgException(Exception):
     """
 
     pass
+
+
+class QPCMsgValidationException(Exception):
+    """Use to report validation errors with kafka message."""
+
+    pass
