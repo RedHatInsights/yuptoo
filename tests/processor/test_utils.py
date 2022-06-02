@@ -11,7 +11,7 @@ def test_print_transformed_info():
     with patch('yuptoo.processor.utils.LOG.info') as mock:
         print_transformed_info(request_obj, host_id, transformed_obj)
     log_sections = ['modified: test']
-    log_message = f"Transformed details host with id {host_id} "
+    log_message = f"Transformed details host with id {host_id}."
     log_message += '\n'.join(log_sections)
     mock.assert_called_once_with(
             log_message

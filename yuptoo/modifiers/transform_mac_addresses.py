@@ -17,4 +17,4 @@ class TransformMacAddresses(Modifier):
                 del host['mac_addresses']
                 transformed_obj['removed'].append('empty mac_addresses')
             except KeyError:
-                LOG.debug("Mac address is not present in host object")
+                LOG.debug("Mac address is not present in host object.")

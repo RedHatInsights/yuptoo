@@ -18,7 +18,7 @@ def print_transformed_info(request_obj, host_id, transformed_obj):
             log_sections.append('%s: %s' % (key, (',').join(value)))
 
     if log_sections:
-        log_message = f"Transformed details host with id {host_id} "
+        log_message = f"Transformed details host with id {host_id}."
         log_message += '\n'.join(log_sections)
         LOG.info(log_message)
 

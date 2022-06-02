@@ -58,9 +58,9 @@ def initialize_logging():
 
 class ContextualFilter(logging.Filter):
     """
-    This filter gets the request_id from the message and adds it to
-    each log record. This way we do not have to explicitly retreive/pass
-    around the request_id for each log message
+    This filter gets the request_id and tenant info from the message and adds to
+    each log record. This way, every time it won't require to retrieve these details
+    per log message.
     """
 
     def filter(self, log_record):
