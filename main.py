@@ -3,13 +3,12 @@ import json
 from confluent_kafka import KafkaException
 
 from yuptoo.lib.config import KAFKA_AUTO_COMMIT, QPC_TOPIC
-from yuptoo.lib.logger import initialize_logging
+from yuptoo.lib.logger import initialize_logging, threadctx
 import logging
 from yuptoo.lib.exceptions import QPCKafkaMsgException
 from yuptoo.validators.qpc_message_validator import validate_qpc_message
 from yuptoo.processor.report_processor import process_report
 from yuptoo.lib import consume, produce
-from yuptoo.lib.logger import threadctx
 
 
 initialize_logging()

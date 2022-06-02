@@ -66,15 +66,15 @@ def process_report(consumed_message, p, request_obj):
 
         total_fingerprints = len(candidate_hosts)
         total_valid = total_fingerprints - len(hosts_without_facts)
-        LOG.info(f"{total_valid}/{total_fingerprints} hosts are valid")
-        LOG.info(f"{count}/{total_hosts} hosts has been send to the inventory service")
+        LOG.info(f"{total_valid}/{total_fingerprints} hosts are valid.")
+        LOG.info(f"{count}/{total_hosts} hosts has been send to the inventory service.")
         if hosts_without_facts:
             LOG.warning(
                 f"{len(hosts_without_facts)} host(s) found that contain(s) 0 canonical facts:"
                 f"{hosts_without_facts}."
             )
         if not candidate_hosts:
-            LOG.error('Report does not contain any valid hosts')
+            LOG.error('Report does not contain any valid hosts.')
             raise QPCReportException()
 
 
@@ -105,7 +105,7 @@ def send_message(kafka_topic, msg):
         producer.produce(kafka_topic, bytes, callback=delivery_report)
         producer.poll(1)
     except KafkaException:
-        LOG.error(f"Failed to produce message to [{UPLOAD_TOPIC}] topic")
+        LOG.error(f"Failed to produce message to [{UPLOAD_TOPIC}] topic.")
 
 
 def extract_report_slices(report_tar, request_obj):
@@ -140,7 +140,7 @@ def extract_report_slices(report_tar, request_obj):
                             except UnicodeDecodeError as error:
                                 LOG.error(
                                     f"Attempting to decode the file {file.name} "
-                                    f"resulted in the following error: {error} "
+                                    f"resulted in the following error: {error}. "
                                     "Discarding file."
                                 )
                                 continue
@@ -163,7 +163,7 @@ def extract_report_slices(report_tar, request_obj):
                                 mismatch_message += invalid_hosts
                             if not matches_metadata:
                                 mismatch_message += 'Metadata must match report slice data. '\
-                                    'Discarding the report slice as invalid'
+                                    'Discarding the report slice as invalid.'
                                 LOG.warning(mismatch_message)
                                 continue
 

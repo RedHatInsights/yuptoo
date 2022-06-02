@@ -13,4 +13,4 @@ class RemoveEmptyIpAddress(Modifier):
                 del host['ip_addresses']
                 transformed_obj['removed'].append('empty ip_addresses')
             except KeyError:
-                LOG.debug("ipaddress field is not present in host object")
+                LOG.debug("ipaddress field is not present in host object.")

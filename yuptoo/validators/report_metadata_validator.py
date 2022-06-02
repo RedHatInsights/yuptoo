@@ -65,7 +65,7 @@ def validate_metadata_file(tar, metadata, request_obj):
         for report_slice_id, num_hosts in invalid_slice_ids.items():
             LOG.warning(
                 f"Report {report_slice_id} has {str(num_hosts)} hosts. "
-                f"There must be no more than {str(MAX_HOSTS_PER_REP)} hosts per report"
+                f"There must be no more than {str(MAX_HOSTS_PER_REP)} hosts per report."
             )
 
     return valid_slice_ids
