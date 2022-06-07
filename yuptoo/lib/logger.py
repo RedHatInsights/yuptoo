@@ -12,17 +12,17 @@ logger = None
 threadctx = local()
 
 
-def clowder_config():
-    # Cloudwatch Configuration with Clowder
+def cloudwatch_config_values():
+    # Returns Cloudwatch config values
     if os.environ.get("ACG_CONFIG"):
         import app_common_python
 
         cfg = app_common_python.LoadedConfig
         if cfg.logging:
             cw = cfg.logging.cloudwatch
-            return cw.accessKeyId, cw.secretAccessKey, cw.region, cw.logGroup, False
+            return cw.accessKeyId, cw.secretAccessKey, cw.region, cw.logGroup
         else:
-            return None, None, None, None, None
+            return None, None, None, None
 
 
 def initialize_logging():
@@ -32,7 +32,7 @@ def initialize_logging():
     logging.root.setLevel(LOG_LEVEL)
     logging.root.addHandler(handler)
     if os.environ.get("CLOWDER_ENABLED", "").lower() == "true":
-        aws_access_key_id, aws_secret_access_key, aws_region_name, aws_log_group, create_log_group = clowder_config()
+        aws_access_key_id, aws_secret_access_key, aws_region_name, aws_log_group = cloudwatch_config_values()
         if all((aws_access_key_id, aws_secret_access_key, aws_region_name, aws_log_group)):
             from boto3.session import Session
             import watchtower
@@ -48,7 +48,7 @@ def initialize_logging():
                 boto3_session=boto3_session,
                 log_group=aws_log_group,
                 stream_name=socket.gethostname(),
-                create_log_group=create_log_group
+                create_log_group=False
             )
 
             cw_handler.setFormatter(LogstashFormatterV1())
