@@ -12,6 +12,7 @@ from yuptoo.lib.config import (HOSTS_TRANSFORMATION_ENABLED,
 from yuptoo.lib.exceptions import FailExtractException, QPCReportException
 from yuptoo.validators.report_metadata_validator import validate_metadata_file
 from yuptoo.processor.utils import has_canonical_facts, print_transformed_info, download_report
+from yuptoo.lib.metrics import report_extract_failures
 
 LOG = logging.getLogger(__name__)
 
@@ -178,11 +179,17 @@ def extract_report_slices(report_tar, request_obj):
             'Tar does not contain valid JSON metadata & report files'
         )
     except FailExtractException as qpc_err:
+        report_extract_failures.labels(
+                    account_number=request_obj['account']
+                ).inc()
         raise qpc_err
     except tarfile.ReadError as err:
         raise FailExtractException(
             f"Unexpected error reading tar file: {str(err),}")
     except Exception as err:
+        report_extract_failures.labels(
+                    account_number=request_obj['account']
+                ).inc()
         LOG.error(
             f"Unexpected error reading tar file: {str(err)}",
         )

@@ -1,14 +1,15 @@
 import json
 
 from confluent_kafka import KafkaException
-
-from yuptoo.lib.config import KAFKA_AUTO_COMMIT, QPC_TOPIC
+from yuptoo.lib.config import KAFKA_AUTO_COMMIT, QPC_TOPIC, METRICS_PORT
 from yuptoo.lib.logger import initialize_logging, threadctx
 import logging
 from yuptoo.lib.exceptions import QPCKafkaMsgException
+from yuptoo.lib.metrics import kafka_failures
 from yuptoo.validators.qpc_message_validator import validate_qpc_message
 from yuptoo.processor.report_processor import process_report
 from yuptoo.lib import consume, produce
+from prometheus_client import start_http_server
 
 
 initialize_logging()
@@ -23,7 +24,11 @@ def set_extra_log_data(request_obj):
 
 consumer = consume.init_consumer()
 producer = produce.init_producer()
+
 LOG.info(f"Started listening on kafka topic - {QPC_TOPIC}.")
+start_http_server(METRICS_PORT)
+LOG.info("Started Yuptoo Prometheus Server.")
+
 while True:
     msg = consumer.poll(1.0)
     if msg is None:
@@ -42,6 +47,9 @@ while True:
         consumer.commit()
         LOG.error(f"Unable to decode kafka message: {msg.value()}")
     except QPCKafkaMsgException as message_error:
+        kafka_failures.labels(
+            account_number=msg['account']
+        ).inc()
         LOG.error(f"Error processing records.  Message: {msg}, Error: {message_error}")
         consumer.commit()
     except Exception as err:

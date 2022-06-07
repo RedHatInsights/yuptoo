@@ -12,6 +12,7 @@ if CLOWDER_ENABLED:
     QPC_TOPIC = KafkaTopics["platform.upload.qpc"].name
     UPLOAD_TOPIC = KafkaTopics["platform.inventory.host-ingress"].name
     VALIDATION_TOPIC = KafkaTopics["platform.upload.validation"].name
+    METRICS_PORT = LoadedConfig.metricsPort
 else:
     INSIGHTS_KAFKA_HOST = os.getenv('INSIGHTS_KAFKA_HOST', 'localhost')
     INSIGHTS_KAFKA_PORT = os.getenv('INSIGHTS_KAFKA_PORT', '29092')
@@ -19,6 +20,7 @@ else:
     QPC_TOPIC = os.getenv('QPC_TOPIC', 'platform.upload.qpc')
     VALIDATION_TOPIC = os.getenv('VALIDATION_TOPIC', 'platform.upload.validation')
     UPLOAD_TOPIC = os.getenv('UPLOAD_TOPIC', 'platform.inventory.host-ingress')
+    METRICS_PORT = os.getenv("METRICS_PORT", 5005)
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 KAFKA_AUTO_COMMIT = os.getenv("KAFKA_AUTO_COMMIT", False)
