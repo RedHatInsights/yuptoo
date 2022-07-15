@@ -16,14 +16,14 @@ b64_identity = ('eyJpZGVudGl0eSI6IHsiYWNjb3VudF9udW1iZXIiOiAic3lzYWNjb3VudCIsICJ
 
 
 def test_validate_qpc_message():
-    qpc_msg = {'url': payload_url, 'account': '123', 'request_id': '234332',
+    qpc_msg = {'url': payload_url, 'account': '123', 'org_id': '123', 'request_id': '234332',
                'b64_identity': b64_identity, 'topic': QPC_TOPIC}
     result = validate_qpc_message(qpc_msg)
-    qpc_msg == result
+    assert result.items() <= qpc_msg.items()
 
 
-def test_validate_qpc_message_without_account():
-    qpc_msg = {'url': payload_url, 'request_id': '234332',
+def test_validate_qpc_message_without_org_id():
+    qpc_msg = {'url': payload_url, 'request_id': '234332', 'account': '123',
                'b64_identity': b64_identity, 'topic': QPC_TOPIC}
     with pytest.raises(QPCKafkaMsgException):
         validate_qpc_message(qpc_msg)

@@ -12,7 +12,7 @@ def test_add_host_facts():
                     'mFsIjogeyJvcmdfaWQiOiAiMzM0MDg1MSIsICJhdXRoX3RpbWUiOiA2MzAwfX19')
     host = {'display_name': 'test.example.com', 'yupana_host_id': uuid1, 'report_slice_id': uuid1, "system_profile": {}}
     transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
-    request_obj = {'b64_identity': b64_identity, 'account': '123',
+    request_obj = {'b64_identity': b64_identity, 'account': '123', 'org_id': '123',
                    'report_platform_id': '123', 'source': 'satellite', 'request_id': uuid1}
     AddHostFacts().run(host, transformed_obj, request_obj=request_obj)
     assert host['facts'][0]['namespace'] == 'yupana'

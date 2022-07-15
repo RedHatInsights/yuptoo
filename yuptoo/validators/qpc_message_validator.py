@@ -12,13 +12,13 @@ def validate_qpc_message(upload_message):
     """Handle the JSON report."""
 
     if upload_message.get('topic') == QPC_TOPIC:
-        account = upload_message.get('account')
-        LOG.info(f"Received record on {QPC_TOPIC} topic for account {account}.")
+        org_id = upload_message.get('org_id')
+        LOG.info(f"Received record on {QPC_TOPIC} topic for org_id {org_id}.")
         missing_fields = []
         request_id = upload_message.get('request_id')
         url = upload_message.get('url')
-        if not account:
-            missing_fields.append('account')
+        if not org_id:
+            missing_fields.append('org_id')
         if not request_id:
             missing_fields.append('request_id')
         if not url:
@@ -29,8 +29,8 @@ def validate_qpc_message(upload_message):
         check_if_url_expired(url, request_id)
         request_obj = {
             'request_id': request_id,
-            'account': account,
-            'org_id': upload_message.get('org_id'),
+            'account': upload_message.get('account'),
+            'org_id': org_id,
             'b64_identity': upload_message.get('b64_identity')
         }
         return request_obj
