@@ -1,9 +1,5 @@
 #!/bin/bash
 
-set -exv
-
-pipenv install -d
-flake8
 export APP_NAME="yuptoo"               # name of app-sre "application" folder this component lives in
 export COMPONENT_NAME="yuptoo"                # name of app-sre "resourceTemplate" in deploy.yaml for this component
 export IMAGE="quay.io/cloudservices/yuptoo"   # the image location on quay
@@ -26,3 +22,6 @@ source $CICD_ROOT/deploy_ephemeral_env.sh
 
 # Run smoke tests with ClowdJobInvocation
 source $CICD_ROOT/cji_smoke_test.sh
+
+#Post test results
+source $CICD_ROOT/post_test_results.sh
