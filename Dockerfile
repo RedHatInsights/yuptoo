@@ -4,4 +4,4 @@ COPY Pipfile Pipfile.lock main.py ${APP_ROOT}/src/
 COPY yuptoo ${APP_ROOT}/src/yuptoo/
 RUN pip install --upgrade pip && \
     pip install pipenv && \
-    pipenv install --system --deploy --ignore-pipfile
+    pipenv install --system --ignore-pipfile
