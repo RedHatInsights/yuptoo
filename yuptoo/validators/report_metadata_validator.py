@@ -2,7 +2,7 @@ import json
 import logging
 from yuptoo.lib.config import MAX_HOSTS_PER_REP
 from yuptoo.lib.exceptions import FailExtractException
-from yuptoo.lib.metrics import HOSTS_COUNTER
+from yuptoo.lib.metrics import incoming_hosts_counter
 
 LOG = logging.getLogger(__name__)
 
@@ -60,8 +60,8 @@ def validate_metadata_file(tar, metadata, request_obj):
             valid_slice_ids[report_slice_id] = num_hosts
         else:
             invalid_slice_ids[report_slice_id] = num_hosts
-
-    HOSTS_COUNTER.labels(
+    incoming_hosts_counter.labels(
+        org_id=request_obj['org_id'],
         source=request_obj['source']).inc(total_hosts_in_report)
 
     # if any reports were over the max number of hosts, we need to log

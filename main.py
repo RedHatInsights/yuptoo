@@ -5,7 +5,7 @@ from yuptoo.lib.config import KAFKA_AUTO_COMMIT, QPC_TOPIC, METRICS_PORT
 from yuptoo.lib.logger import initialize_logging, threadctx
 import logging
 from yuptoo.lib.exceptions import QPCKafkaMsgException
-from yuptoo.lib.metrics import kafka_failures
+from yuptoo.lib.metrics import kafka_failures, report_processing_exceptions
 from yuptoo.validators.qpc_message_validator import validate_qpc_message
 from yuptoo.processor.report_processor import process_report
 from yuptoo.lib import consume, produce
@@ -48,11 +48,14 @@ while True:
         LOG.error(f"Unable to decode kafka message: {msg.value()}")
     except QPCKafkaMsgException as message_error:
         kafka_failures.labels(
-            account_number=msg['account']
+            org_id=msg['org_id']
         ).inc()
         LOG.error(f"Error processing records.  Message: {msg}, Error: {message_error}")
         consumer.commit()
     except Exception as err:
+        report_processing_exceptions.labels(
+            org_id=msg['org_id']
+        ).inc()
         consumer.commit()
         LOG.error(f"An error occurred during message processing: {repr(err)}")
     finally:

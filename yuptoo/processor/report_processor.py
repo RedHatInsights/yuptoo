@@ -12,7 +12,7 @@ from yuptoo.lib.config import (HOSTS_TRANSFORMATION_ENABLED,
 from yuptoo.lib.exceptions import FailExtractException, QPCReportException
 from yuptoo.validators.report_metadata_validator import validate_metadata_file
 from yuptoo.processor.utils import has_canonical_facts, print_transformed_info, download_report
-from yuptoo.lib.metrics import report_extract_failures
+from yuptoo.lib.metrics import extract_report_slices_failures, host_uploaded, host_upload_failures
 
 LOG = logging.getLogger(__name__)
 
@@ -64,6 +64,9 @@ def process_report(consumed_message, p, request_obj):
                 upload_to_host_inventory_via_kafka(host, request_obj)
             else:
                 hosts_without_facts.append({report_slice.get('report_slice_id'): host})
+                host_upload_failures.labels(
+                    org_id=request_obj['org_id']
+                ).inc()
 
         total_fingerprints = len(candidate_hosts)
         total_valid = total_fingerprints - len(hosts_without_facts)
@@ -88,8 +91,13 @@ def upload_to_host_inventory_via_kafka(host, request_obj):
                                   'b64_identity': request_obj['b64_identity']}
         }
         send_message(UPLOAD_TOPIC, upload_msg)
-
+        host_uploaded.labels(
+                    org_id=request_obj['org_id']
+                ).inc()
     except Exception as err:
+        host_upload_failures.labels(
+                org_id=request_obj['org_id']
+            ).inc()
         LOG.error(f"The following error occurred: {err}")
 
 
@@ -179,16 +187,16 @@ def extract_report_slices(report_tar, request_obj):
             'Tar does not contain valid JSON metadata & report files'
         )
     except FailExtractException as qpc_err:
-        report_extract_failures.labels(
-                    account_number=request_obj['account']
+        extract_report_slices_failures.labels(
+                    org_id=request_obj['org_id']
                 ).inc()
         raise qpc_err
     except tarfile.ReadError as err:
         raise FailExtractException(
             f"Unexpected error reading tar file: {str(err),}")
     except Exception as err:
-        report_extract_failures.labels(
-                    account_number=request_obj['account']
+        extract_report_slices_failures.labels(
+                    org_id=request_obj['org_id']
                 ).inc()
         LOG.error(
             f"Unexpected error reading tar file: {str(err)}",
