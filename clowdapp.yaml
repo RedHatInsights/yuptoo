@@ -12,6 +12,7 @@ objects:
     envName: ${ENV_NAME}
     dependencies:
     - ingress
+    - host-inventory
     deployments:
     - name: yuptoo-service
       podSpec:
