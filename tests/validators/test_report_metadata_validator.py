@@ -57,6 +57,7 @@ def test_validate_metadata_file():
     }
     request_obj = {}
     request_obj['account'] = 123
+    request_obj['org_id'] = 123
     request_obj['request_id'] = 456
     buffer_content = create_tar_buffer(report_files)
     tar = tarfile.open(fileobj=BytesIO(buffer_content), mode='r:*')
@@ -87,6 +88,7 @@ def test_metadata_with_invalid_slice():
     }
     request_obj = {}
     request_obj['account'] = 123
+    request_obj['org_id'] = 123
     request_obj['request_id'] = 456
     buffer_content = create_tar_buffer(report_files)
     tar = tarfile.open(fileobj=BytesIO(buffer_content), mode='r:*')

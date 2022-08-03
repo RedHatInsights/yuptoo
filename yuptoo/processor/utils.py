@@ -1,6 +1,6 @@
 import requests
 from abc import ABC, abstractmethod
-
+from yuptoo.lib.metrics import archive_downloaded_success, archive_failed_to_download
 from yuptoo.lib.exceptions import FailDownloadException
 import logging
 
@@ -49,12 +49,10 @@ def download_report(consumed_message):
         download_response = requests.get(report_url)
 
         LOG.info(f"Successfully downloaded TAR from {report_url}")
+        archive_downloaded_success.inc()
         return download_response.content
-
-    except FailDownloadException as fail_err:
-        raise fail_err
-
     except Exception as err:
+        archive_failed_to_download.labels(org_id=consumed_message.get('org_id')).inc()
         raise FailDownloadException(
             f"Unexpected error for URL {report_url}. Error: {err}"
         )

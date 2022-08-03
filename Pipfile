@@ -9,6 +9,7 @@ requests = "*"
 app-common-python = "*"
 logstash-formatter = "*"
 watchtower = "*"
+prometheus-client = "*"
 
 [requires]
 python_version = "3.9"
