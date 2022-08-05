@@ -1,6 +1,5 @@
 import json
 
-from confluent_kafka import KafkaException
 from yuptoo.lib.config import KAFKA_AUTO_COMMIT, QPC_TOPIC, METRICS_PORT
 from yuptoo.lib.logger import initialize_logging, threadctx
 import logging
@@ -35,28 +34,26 @@ while True:
         continue
     if msg.error():
         LOG.error(f"Kafka error occured : {msg.error()}.")
-        raise KafkaException(msg.error())
+        continue
     try:
         topic = msg.topic()
         msg = json.loads(msg.value().decode("utf-8"))
         msg['topic'] = topic
         request_obj = validate_qpc_message(msg)
         set_extra_log_data(request_obj)
+        consumer.commit()
         process_report(msg, producer, request_obj)
     except json.decoder.JSONDecodeError:
-        consumer.commit()
         LOG.error(f"Unable to decode kafka message: {msg.value()}")
     except QPCKafkaMsgException as message_error:
         kafka_failures.labels(
             org_id=msg['org_id']
         ).inc()
         LOG.error(f"Error processing records.  Message: {msg}, Error: {message_error}")
-        consumer.commit()
     except Exception as err:
         report_processing_exceptions.labels(
             org_id=msg['org_id']
         ).inc()
-        consumer.commit()
         LOG.error(f"An error occurred during message processing: {repr(err)}")
     finally:
         if not KAFKA_AUTO_COMMIT:
