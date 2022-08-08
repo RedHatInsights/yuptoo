@@ -25,4 +25,4 @@ jobs:
         uses: gsactions/commit-message-checker@v1
         with:
           pattern: '^(Refs|Fixes) #YUPTOO-[0-9]+ - .+$'
-          error: 'Commit message should start with "Fixes #YUPTOO-<issue number> - " and end with a period(dot)'
+          error: 'Commit message should start with "Fixes #YUPTOO-<issue number> - "'
