@@ -26,6 +26,7 @@ def test_process_report_without_facts():
     }
     consumed_message = {
         "account": "12345",
+        "org_id": "123",
         "category": "sample",
         "metadata": {"reporter": ""},
         "request_id": "32bcf6e59d03/IhactaBNbg-000001",
@@ -35,7 +36,7 @@ def test_process_report_without_facts():
         "url": f"http://minio:9000/insights-upload-perma?X-Amz-Date=\
                 {datetime.now().strftime('%Y%m%dT%H%M%SZ')}&X-Amz-Expires=86400"
     }
-    request_object = {}
+    request_object = {'org_id': consumed_message['org_id']}
     buffer_content = create_tar_buffer(report_files)
     producer = Mock()
     with patch('yuptoo.processor.report_processor.download_report', return_value=buffer_content):
@@ -63,6 +64,7 @@ def test_process_report():
     }
     consumed_message = {
         "account": "12345",
+        "org_id": "123",
         "category": "sample",
         "metadata": {"reporter": ""},
         "request_id": "32bcf6e59d03/IhactaBNbg-000001",
@@ -72,7 +74,7 @@ def test_process_report():
         "url": f"http://minio:9000/insights-upload-perma?X-Amz-Date=\
                 {datetime.now().strftime('%Y%m%dT%H%M%SZ')}&X-Amz-Expires=86400"
     }
-    request_object = {'request_id': consumed_message['request_id']}
+    request_object = {'request_id': consumed_message['request_id'], 'org_id': consumed_message['org_id']}
     buffer_content = create_tar_buffer(report_files)
     producer = Mock()
     with patch('yuptoo.processor.report_processor.upload_to_host_inventory_via_kafka', return_value=None) as mock:
@@ -100,6 +102,7 @@ def test_extract_report_slices():
     }
     request_obj = {}
     request_obj['account'] = 123
+    request_obj['org_id'] = 123
     request_obj['request_id'] = 456
     buffer_content = create_tar_buffer(report_files)
     result = extract_report_slices(buffer_content, request_obj)
