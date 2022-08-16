@@ -26,14 +26,12 @@ class AddHostFacts(Modifier):
 
         host['system_unique_id'] = unique_id_base + host['yupana_host_id']
 
-        host['account'] = request_obj['account']
         host['org_id'] = request_obj['org_id']
         host_facts = host.get('facts', [])
         host_facts.append({'namespace': 'yupana',
                            'facts': {'yupana_host_id': host['yupana_host_id'],
                                         'report_platform_id': str(request_obj['report_platform_id']),
                                         'report_slice_id': host['report_slice_id'],
-                                        'account': request_obj['account'],
                                         'org_id': request_obj['org_id'],
                                         'source': request_obj['source']}})
         host['stale_timestamp'] = self.get_stale_time(request_obj)
