@@ -1,6 +1,6 @@
 import json
 
-from yuptoo.lib.config import KAFKA_AUTO_COMMIT, QPC_TOPIC, METRICS_PORT
+from yuptoo.lib.config import KAFKA_AUTO_COMMIT, ANNOUNCE_TOPIC, METRICS_PORT
 from yuptoo.lib.logger import initialize_logging, threadctx
 import logging
 from yuptoo.lib.exceptions import QPCKafkaMsgException
@@ -24,7 +24,7 @@ def set_extra_log_data(request_obj):
 consumer = consume.init_consumer()
 producer = produce.init_producer()
 
-LOG.info(f"Started listening on kafka topic - {QPC_TOPIC}.")
+LOG.info(f"Started listening on kafka topic - {ANNOUNCE_TOPIC}.")
 start_http_server(METRICS_PORT)
 LOG.info("Started Yuptoo Prometheus Server.")
 
@@ -36,13 +36,17 @@ while True:
         LOG.error(f"Kafka error occured : {msg.error()}.")
         continue
     try:
-        topic = msg.topic()
-        msg = json.loads(msg.value().decode("utf-8"))
-        msg['topic'] = topic
-        request_obj = validate_qpc_message(msg)
-        set_extra_log_data(request_obj)
-        consumer.commit()
-        process_report(msg, producer, request_obj)
+        service = dict(msg.headers() or []).get('service')
+        if service:
+            service = service.decode("utf-8")
+            if service == 'qpc':
+                topic = msg.topic()
+                msg = json.loads(msg.value().decode("utf-8"))
+                msg['topic'] = topic
+                request_obj = validate_qpc_message(msg)
+                set_extra_log_data(request_obj)
+                consumer.commit()
+                process_report(msg, producer, request_obj)
     except json.decoder.JSONDecodeError:
         LOG.error(f"Unable to decode kafka message: {msg.value()}")
     except QPCKafkaMsgException as message_error:

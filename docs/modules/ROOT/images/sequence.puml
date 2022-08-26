@@ -1,12 +1,12 @@
 @startuml
 title YUPTOO Processing Flow
-entity platform.upload.qpc
+entity platform.upload.announce
 entity platform.upload.validation
 participant yuptoo
 entity platform.inventory.hostingress
 participant hbi
-platform.upload.qpc->yuptoo: msg
-Note right of platform.upload.qpc: {"request_id": "abcd1234",\n"account": "000001",\n"principal": "123456",\n"size": "size_in_bytes",\n"service": "destination service",\n"category": "file category",\n"url": "bucket_url",\n"b64_identity": "base64_identity_string",\n"metadata": {}\n}
+platform.upload.announce->yuptoo: msg
+Note right of platform.upload.announce: {"request_id": "abcd1234",\n"account": "000001",\n"principal": "123456",\n"size": "size_in_bytes",\n"service": "destination service",\n"category": "file category",\n"url": "bucket_url",\n"b64_identity": "base64_identity_string",\n"metadata": {}\n}
 yuptoo->yuptoo: Downloads archive from\nS3 bucket
 yuptoo->yuptoo: Extracts report slices from archive
 alt success

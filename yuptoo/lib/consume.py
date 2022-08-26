@@ -1,5 +1,5 @@
 from confluent_kafka import Consumer
-from yuptoo.lib.config import KAFKA_AUTO_COMMIT, INSIGHTS_KAFKA_ADDRESS, QPC_TOPIC, kafka_auth_config
+from yuptoo.lib.config import KAFKA_AUTO_COMMIT, INSIGHTS_KAFKA_ADDRESS, ANNOUNCE_TOPIC, kafka_auth_config
 
 
 def init_consumer():
@@ -11,6 +11,6 @@ def init_consumer():
     }
     kafka_auth_config(connection_object)
     consumer = Consumer(connection_object)
-    consumer.subscribe([QPC_TOPIC])
+    consumer.subscribe([ANNOUNCE_TOPIC])
 
     return consumer
