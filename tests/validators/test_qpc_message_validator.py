@@ -4,7 +4,7 @@ from unittest.mock import patch
 from datetime import datetime
 from yuptoo.validators.qpc_message_validator import check_if_url_expired, validate_qpc_message
 from yuptoo.lib.exceptions import QPCKafkaMsgException
-from yuptoo.lib.config import QPC_TOPIC
+from yuptoo.lib.config import ANNOUNCE_TOPIC
 
 
 payload_url = f"http://minio:9000/insights-upload-perma?X-Amz-Date="\
@@ -17,14 +17,14 @@ b64_identity = ('eyJpZGVudGl0eSI6IHsiYWNjb3VudF9udW1iZXIiOiAic3lzYWNjb3VudCIsICJ
 
 def test_validate_qpc_message():
     qpc_msg = {'url': payload_url, 'account': '123', 'org_id': '123', 'request_id': '234332',
-               'b64_identity': b64_identity, 'topic': QPC_TOPIC}
+               'b64_identity': b64_identity, 'topic': ANNOUNCE_TOPIC}
     result = validate_qpc_message(qpc_msg)
     assert result.items() <= qpc_msg.items()
 
 
 def test_validate_qpc_message_without_org_id():
     qpc_msg = {'url': payload_url, 'request_id': '234332', 'account': '123',
-               'b64_identity': b64_identity, 'topic': QPC_TOPIC}
+               'b64_identity': b64_identity, 'topic': ANNOUNCE_TOPIC}
     with pytest.raises(QPCKafkaMsgException):
         validate_qpc_message(qpc_msg)
 
@@ -34,7 +34,7 @@ def test_qpc_message_without_topic():
                'b64_identity': b64_identity}
     with patch('yuptoo.validators.qpc_message_validator.LOG.error') as mock:
         validate_qpc_message(qpc_msg)
-    mock.assert_called_once_with(f"Message not found on topic: {QPC_TOPIC}")
+    mock.assert_called_once_with(f"Message not found on topic: {ANNOUNCE_TOPIC}")
 
 
 def test_check_if_url_expired():

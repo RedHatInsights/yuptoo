@@ -31,7 +31,7 @@ objects:
           - name: CLOWDER_ENABLED
             value: ${CLOWDER_ENABLED}
     kafkaTopics:
-      - topicName: platform.upload.qpc
+      - topicName: platform.upload.announce
         partitions: 1
       - topicName: platform.inventory.host-ingress
         partitions: 1

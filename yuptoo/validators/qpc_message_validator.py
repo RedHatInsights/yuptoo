@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from urllib.parse import parse_qs, urlparse
 
-from yuptoo.lib.config import QPC_TOPIC
+from yuptoo.lib.config import ANNOUNCE_TOPIC
 from yuptoo.lib.exceptions import QPCKafkaMsgException
 
 LOG = logging.getLogger(__name__)
@@ -11,9 +11,9 @@ LOG = logging.getLogger(__name__)
 def validate_qpc_message(upload_message):
     """Handle the JSON report."""
 
-    if upload_message.get('topic') == QPC_TOPIC:
+    if upload_message.get('topic') == ANNOUNCE_TOPIC:
         org_id = upload_message.get('org_id')
-        LOG.info(f"Received record on {QPC_TOPIC} topic for org_id {org_id}.")
+        LOG.info(f"Received record on {ANNOUNCE_TOPIC} topic for org_id {org_id}.")
         missing_fields = []
         request_id = upload_message.get('request_id')
         url = upload_message.get('url')
@@ -35,7 +35,7 @@ def validate_qpc_message(upload_message):
         }
         return request_obj
     else:
-        LOG.error(f"Message not found on topic: {QPC_TOPIC}")
+        LOG.error(f"Message not found on topic: {ANNOUNCE_TOPIC}")
 
 
 def check_if_url_expired(url, request_id):

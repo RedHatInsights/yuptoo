@@ -16,8 +16,8 @@
         ],
         "topics": [
             {
-                "requestedName": "platform.upload.qpc",
-                "name": "platform.upload.qpc"
+                "requestedName": "platform.upload.announce",
+                "name": "platform.upload.announce"
             },
             {
                 "requestedName": "platform.inventory.host-ingress",
