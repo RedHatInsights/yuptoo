@@ -12,7 +12,7 @@ from yuptoo.lib.config import (HOSTS_TRANSFORMATION_ENABLED,
 from yuptoo.lib.exceptions import FailExtractException, QPCReportException
 from yuptoo.validators.report_metadata_validator import validate_metadata_file
 from yuptoo.processor.utils import has_canonical_facts, print_transformed_info, download_report
-from yuptoo.lib.metrics import extract_report_slices_failures, host_uploaded, host_upload_failures
+from yuptoo.lib.metrics import host_uploaded, host_upload_failures
 
 LOG = logging.getLogger(__name__)
 
@@ -21,65 +21,58 @@ SUCCESS_CONFIRM_STATUS = 'success'
 FAILURE_CONFIRM_STATUS = 'failure'
 
 
-def process_report(consumed_message, p, request_obj):
-    global producer
-    producer = p
-    report_tar = download_report(consumed_message)
-    report_json_files = extract_report_slices(report_tar, request_obj)
-
+def process_report_slice(report_slice, request_obj):
     status = FAILURE_CONFIRM_STATUS
-    for report_slice in report_json_files:
-        LOG.info(f"Processing hosts in slice with id - {report_slice.get('report_slice_id')}")
-        hosts = report_slice.get('hosts', [])
-        total_hosts = len(hosts)
-        count = 0
-        candidate_hosts = []
-        hosts_without_facts = []
-        for host in hosts:
-            yupana_host_id = str(uuid.uuid4())
-            host['yupana_host_id'] = yupana_host_id
-            if has_canonical_facts(host):
-                host['report_slice_id'] = report_slice.get('report_slice_id')
-                candidate_hosts.append({yupana_host_id: host})
-                # Run modifier below
-                transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
-                if HOSTS_TRANSFORMATION_ENABLED:
-                    from yuptoo.modifiers import get_modifiers
-                    for modifier in get_modifiers():
-                        i = importlib.import_module('yuptoo.modifiers.' + modifier)
-                        for m in inspect.getmembers(i, inspect.isclass):
-                            if m[1].__module__ == i.__name__:
-                                m[1]().run(host, transformed_obj, request_obj=request_obj)
+    LOG.info(f"Processing hosts in slice with id - {report_slice.get('report_slice_id')}")
+    hosts = report_slice.get('hosts', [])
+    request_obj['total_host_count'] += len(hosts)
+    for host in hosts:
+        yupana_host_id = str(uuid.uuid4())
+        host['yupana_host_id'] = yupana_host_id
+        if has_canonical_facts(host):
+            host['report_slice_id'] = report_slice.get('report_slice_id')
+            request_obj['candidate_hosts'].append({yupana_host_id: host})
+            # Run modifier below
+            transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
+            if HOSTS_TRANSFORMATION_ENABLED:
+                from yuptoo.modifiers import get_modifiers
+                for modifier in get_modifiers():
+                    i = importlib.import_module('yuptoo.modifiers.' + modifier)
+                    for m in inspect.getmembers(i, inspect.isclass):
+                        if m[1].__module__ == i.__name__:
+                            m[1]().run(host, transformed_obj, request_obj=request_obj)
 
-                count += 1
-                if candidate_hosts:
-                    status = SUCCESS_CONFIRM_STATUS
-                validation_message = {
-                    'hash': request_obj['request_id'],
-                    'request_id': request_obj['request_id'],
-                    'validation': status
-                }
-                send_message(VALIDATION_TOPIC, validation_message)
-                print_transformed_info(request_obj, host['yupana_host_id'], transformed_obj)
-                upload_to_host_inventory_via_kafka(host, request_obj)
-            else:
-                hosts_without_facts.append({report_slice.get('report_slice_id'): host})
-                host_upload_failures.labels(
-                    org_id=request_obj['org_id']
-                ).inc()
+            if request_obj['candidate_hosts']:
+                status = SUCCESS_CONFIRM_STATUS
+            validation_message = {
+                'hash': request_obj['request_id'],
+                'request_id': request_obj['request_id'],
+                'validation': status
+            }
+            send_message(VALIDATION_TOPIC, validation_message)
+            print_transformed_info(request_obj, host['yupana_host_id'], transformed_obj)
+            upload_to_host_inventory_via_kafka(host, request_obj)
+        else:
+            request_obj['hosts_without_facts'].append({report_slice.get('report_slice_id'): host})
+            host_upload_failures.labels(
+                org_id=request_obj['org_id']
+            ).inc()
 
-        total_fingerprints = len(candidate_hosts)
-        total_valid = total_fingerprints - len(hosts_without_facts)
-        LOG.info(f"{total_valid}/{total_fingerprints} hosts are valid.")
-        LOG.info(f"{count}/{total_hosts} hosts has been send to the inventory service.")
-        if hosts_without_facts:
-            LOG.warning(
-                f"{len(hosts_without_facts)} host(s) found that contain(s) 0 canonical facts:"
-                f"{hosts_without_facts}."
-            )
-        if not candidate_hosts:
-            LOG.error('Report does not contain any valid hosts.')
-            raise QPCReportException()
+
+def log_report_summary(request_obj):
+    total_fingerprints = len(request_obj['candidate_hosts'])
+    total_valid = total_fingerprints - len(request_obj['hosts_without_facts'])
+    LOG.info(f"{total_valid}/{total_fingerprints} hosts are valid.")
+    LOG.info(f"{request_obj['host_inventory_upload_count']}/{request_obj['total_host_count']}"
+             "hosts has been send to the inventory service.")
+    if request_obj['hosts_without_facts']:
+        LOG.warning(
+            f"{len(request_obj['hosts_without_facts'])} host(s) found that contain(s) 0 canonical facts:"
+            f"{request_obj['hosts_without_facts']}."
+        )
+    if not request_obj['candidate_hosts']:
+        LOG.error('Report does not contain any valid hosts.')
+        raise QPCReportException()
 
 
 def upload_to_host_inventory_via_kafka(host, request_obj):
@@ -94,6 +87,7 @@ def upload_to_host_inventory_via_kafka(host, request_obj):
         host_uploaded.labels(
                     org_id=request_obj['org_id']
                 ).inc()
+        request_obj['host_inventory_upload_count'] += 1
     except Exception as err:
         host_upload_failures.labels(
                 org_id=request_obj['org_id']
@@ -117,15 +111,21 @@ def send_message(kafka_topic, msg):
         LOG.error(f"Failed to produce message to [{UPLOAD_TOPIC}] topic.")
 
 
-def extract_report_slices(report_tar, request_obj):
-    """Extract Insights report from tar file and
-    returns Insights report as dict"""
-
+def process_report(consumed_message, p, request_obj):
+    """Extract and Process Insights report"""
+    global producer
+    producer = p
+    request_obj.update({
+        "candidate_hosts": [],
+        "hosts_without_facts": [],
+        "total_host_count": 0,
+        "host_inventory_upload_count": 0
+    })
+    report_tar = download_report(consumed_message)
     try:  # pylint: disable=too-many-nested-blocks
         tar = tarfile.open(fileobj=BytesIO(report_tar), mode='r:*')
         files = tar.getmembers()
         json_files = []
-        report_files = []
         metadata_file = None
         for file in files:
             # First we need to Find the metadata file
@@ -176,28 +176,13 @@ def extract_report_slices(report_tar, request_obj):
                                 LOG.warning(mismatch_message)
                                 continue
 
-                            # Here performace can be improved by using Async thread
-                            report_files.append(report_slice_json)
-                return report_files
+                            # Here performance can be improved by using Async thread
+                            process_report_slice(report_slice_json, request_obj)
+                log_report_summary(request_obj)
             except ValueError as error:
                 raise FailExtractException(
                     f"Report is not valid JSON. Error: {str(error)}"
                 )
-        raise FailExtractException(
-            'Tar does not contain valid JSON metadata & report files'
-        )
-    except FailExtractException as qpc_err:
-        extract_report_slices_failures.labels(
-                    org_id=request_obj['org_id']
-                ).inc()
-        raise qpc_err
     except tarfile.ReadError as err:
         raise FailExtractException(
             f"Unexpected error reading tar file: {str(err),}")
-    except Exception as err:
-        extract_report_slices_failures.labels(
-                    org_id=request_obj['org_id']
-                ).inc()
-        LOG.error(
-            f"Unexpected error reading tar file: {str(err)}",
-        )
