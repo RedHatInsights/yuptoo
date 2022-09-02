@@ -34,10 +34,11 @@ def initialize_logging():
     if os.environ.get("CLOWDER_ENABLED", "").lower() == "true":
         aws_access_key_id, aws_secret_access_key, aws_region_name, aws_log_group = cloudwatch_config_values()
         if all((aws_access_key_id, aws_secret_access_key, aws_region_name, aws_log_group)):
-            from boto3.session import Session
+            import boto3
             import watchtower
 
-            boto3_session = Session(
+            boto3_client = boto3.client(
+                'logs',
                 aws_access_key_id=aws_access_key_id,
                 aws_secret_access_key=aws_secret_access_key,
                 region_name=aws_region_name
@@ -45,10 +46,9 @@ def initialize_logging():
 
             # configure logging to use watchtower
             cw_handler = watchtower.CloudWatchLogHandler(
-                boto3_session=boto3_session,
+                boto3_client=boto3_client,
                 log_group=aws_log_group,
-                stream_name=socket.gethostname(),
-                create_log_group=False
+                stream_name=socket.gethostname()
             )
 
             cw_handler.setFormatter(LogstashFormatterV1())
