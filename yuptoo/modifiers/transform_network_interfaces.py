@@ -1,4 +1,8 @@
 from yuptoo.processor.utils import Modifier
+from yuptoo.modifiers.transform_mac_addresses import (
+    _remove_mac_addrs_for_omitted_nics)
+
+NETWORK_INTERFACES_TOKENS_TO_OMIT = ['cali']
 
 
 class TransformNetworkInterfaces(Modifier):
@@ -7,7 +11,19 @@ class TransformNetworkInterfaces(Modifier):
         system_profile = host.get('system_profile', {})
         network_interfaces = system_profile.get('network_interfaces')
         if network_interfaces:
-            filtered_nics = list(filter(lambda nic: nic.get('name'), network_interfaces))
+            mac_addresses_to_omit = []
+            filtered_nics = []
+            for nic in network_interfaces:
+                if nic.get('name'):
+                    lowercase_name = nic['name'].lower()
+                    if any(map(lowercase_name.startswith,
+                               NETWORK_INTERFACES_TOKENS_TO_OMIT)):
+                        mac_addresses_to_omit.append(nic.get('mac_address'))
+                        continue
+                    filtered_nics.append(nic)
+            host, transformed_obj = _remove_mac_addrs_for_omitted_nics(
+                host, mac_addresses_to_omit, transformed_obj)
+
             increment_counts = {
                 'mtu': 0,
                 'ipv6_addresses': 0
