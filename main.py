@@ -1,6 +1,6 @@
 import json
 
-from yuptoo.lib.config import KAFKA_AUTO_COMMIT, ANNOUNCE_TOPIC, METRICS_PORT
+from yuptoo.lib.config import KAFKA_AUTO_COMMIT, ANNOUNCE_TOPIC, METRICS_PORT, KAFKA_BROKER
 from yuptoo.lib.logger import initialize_logging, threadctx
 import logging
 from yuptoo.lib.exceptions import QPCKafkaMsgException
@@ -13,6 +13,12 @@ from prometheus_client import start_http_server
 
 initialize_logging()
 LOG = logging.getLogger(__name__)
+
+
+# Create cacert for kafka managed kafka config.
+if KAFKA_BROKER and KAFKA_BROKER.cacert:
+    with open('/tmp/cacert', 'w') as f:
+        f.write(KAFKA_BROKER.cacert)
 
 
 def set_extra_log_data(request_obj):
