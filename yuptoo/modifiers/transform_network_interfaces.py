@@ -1,5 +1,5 @@
 from yuptoo.processor.utils import Modifier
-from yuptoo.modifiers.transform_mac_addresses import (
+from yuptoo.common.mac_addresses import (
     _remove_mac_addrs_for_omitted_nics)
 
 NETWORK_INTERFACES_TOKENS_TO_OMIT = ['cali']
