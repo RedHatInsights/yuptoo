@@ -19,7 +19,8 @@ def test_process_report_without_facts():
         }
     report_json = {
         'report_slice_id': str(uuid1),
-        'hosts': [{str(uuid1): {'key': 'value'}}]}
+        'hosts': [{'key': 'value', 'fqdn': "test.example.com"}]
+    }
     report_files = {
         'metadata.json': metadata_json,
         '%s.json' % str(uuid1): report_json

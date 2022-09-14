@@ -31,7 +31,7 @@ def process_report_slice(report_slice, request_obj):
         host['yupana_host_id'] = yupana_host_id
         if has_canonical_facts(host):
             host['report_slice_id'] = report_slice.get('report_slice_id')
-            request_obj['candidate_hosts'].append({yupana_host_id: host})
+            request_obj['candidate_hosts'] += 1
             # Run modifier below
             transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
             if HOSTS_TRANSFORMATION_ENABLED:
@@ -42,8 +42,8 @@ def process_report_slice(report_slice, request_obj):
                         if m[1].__module__ == i.__name__:
                             m[1]().run(host, transformed_obj, request_obj=request_obj)
 
-            if request_obj['candidate_hosts']:
-                status = SUCCESS_CONFIRM_STATUS
+            # We will need to contact storage broker team and confirm below behaviour.
+            status = SUCCESS_CONFIRM_STATUS
             validation_message = {
                 'hash': request_obj['request_id'],
                 'request_id': request_obj['request_id'],
@@ -53,14 +53,14 @@ def process_report_slice(report_slice, request_obj):
             print_transformed_info(request_obj, host['yupana_host_id'], transformed_obj)
             upload_to_host_inventory_via_kafka(host, request_obj)
         else:
-            request_obj['hosts_without_facts'].append({report_slice.get('report_slice_id'): host})
+            request_obj['hosts_without_facts'].append({report_slice.get('report_slice_id'): host['fqdn']})
             host_upload_failures.labels(
                 org_id=request_obj['org_id']
             ).inc()
 
 
 def log_report_summary(request_obj):
-    total_fingerprints = len(request_obj['candidate_hosts'])
+    total_fingerprints = request_obj['candidate_hosts']
     total_valid = total_fingerprints - len(request_obj['hosts_without_facts'])
     LOG.info(f"{total_valid}/{total_fingerprints} hosts are valid.")
     LOG.info(f"{request_obj['host_inventory_upload_count']}/{request_obj['total_host_count']}"
@@ -70,7 +70,7 @@ def log_report_summary(request_obj):
             f"{len(request_obj['hosts_without_facts'])} host(s) found that contain(s) 0 canonical facts:"
             f"{request_obj['hosts_without_facts']}."
         )
-    if not request_obj['candidate_hosts']:
+    if total_fingerprints == 0:
         LOG.error('Report does not contain any valid hosts.')
         raise QPCReportException()
 
@@ -116,7 +116,7 @@ def process_report(consumed_message, p, request_obj):
     global producer
     producer = p
     request_obj.update({
-        "candidate_hosts": [],
+        "candidate_hosts": 0,
         "hosts_without_facts": [],
         "total_host_count": 0,
         "host_inventory_upload_count": 0
