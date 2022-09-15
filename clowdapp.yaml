@@ -75,3 +75,6 @@ parameters:
 - description: Is clowder enabled
   name: CLOWDER_ENABLED
   value: "True"
+- description: Consumer group id to be used.
+  name: KAFKA_CONSUMER_GROUP_ID
+  value: "qpc-group"
