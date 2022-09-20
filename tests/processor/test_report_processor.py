@@ -3,7 +3,7 @@ import uuid
 import pytest
 
 from datetime import datetime
-from yuptoo.processor.report_processor import extract_report_slices, process_report
+from yuptoo.processor.report_processor import process_report
 from yuptoo.lib.exceptions import QPCReportException
 from tests.utils import create_tar_buffer
 
@@ -19,7 +19,8 @@ def test_process_report_without_facts():
         }
     report_json = {
         'report_slice_id': str(uuid1),
-        'hosts': [{str(uuid1): {'key': 'value'}}]}
+        'hosts': [{'key': 'value', 'fqdn': "test.example.com"}]
+    }
     report_files = {
         'metadata.json': metadata_json,
         '%s.json' % str(uuid1): report_json
@@ -82,28 +83,3 @@ def test_process_report():
             with patch('yuptoo.processor.report_processor.HOSTS_TRANSFORMATION_ENABLED', 0):
                 process_report(consumed_message, producer, request_object)
     mock.assert_called_once
-
-
-def test_extract_report_slices():
-    uuid1 = uuid.uuid4()
-    metadata_json = {
-            'report_id': 1,
-            'host_inventory_api_version': '1.0.0',
-            'source': 'qpc',
-            'source_metadata': {'foo': 'bar'},
-            'report_slices': {str(uuid1): {'number_hosts': 1}}
-        }
-    report_json = {
-        'report_slice_id': str(uuid1),
-        'hosts': {str(uuid1): {'key': 'value'}}}
-    report_files = {
-        'metadata.json': metadata_json,
-        '%s.json' % str(uuid1): report_json
-    }
-    request_obj = {}
-    request_obj['account'] = 123
-    request_obj['org_id'] = 123
-    request_obj['request_id'] = 456
-    buffer_content = create_tar_buffer(report_files)
-    result = extract_report_slices(buffer_content, request_obj)
-    assert [{'hosts': {str(uuid1): {'key': 'value'}}, 'report_slice_id': str(uuid1)}] == result

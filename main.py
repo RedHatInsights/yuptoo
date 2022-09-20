@@ -3,8 +3,8 @@ import json
 from yuptoo.lib.config import KAFKA_AUTO_COMMIT, ANNOUNCE_TOPIC, METRICS_PORT, KAFKA_BROKER
 from yuptoo.lib.logger import initialize_logging, threadctx
 import logging
-from yuptoo.lib.exceptions import QPCKafkaMsgException
-from yuptoo.lib.metrics import kafka_failures, report_processing_exceptions
+from yuptoo.lib.exceptions import QPCKafkaMsgException, FailExtractException
+from yuptoo.lib.metrics import kafka_failures, report_processing_exceptions, extract_report_slices_failures
 from yuptoo.validators.qpc_message_validator import validate_qpc_message
 from yuptoo.processor.report_processor import process_report
 from yuptoo.lib import consume, produce
@@ -59,7 +59,12 @@ while True:
         kafka_failures.labels(
             org_id=msg['org_id']
         ).inc()
-        LOG.error(f"Error processing records.  Message: {msg}, Error: {message_error}")
+        LOG.error(f"Error processing Kafka message.  Message: {msg}, Error: {message_error}")
+    except FailExtractException as err:
+        extract_report_slices_failures.labels(
+                    org_id=request_obj['org_id']
+                ).inc()
+        LOG.error(f"Error Extracting report.  Message: {msg}, Error: {err}")
     except Exception as err:
         report_processing_exceptions.labels(
             org_id=msg['org_id']
