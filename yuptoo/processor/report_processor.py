@@ -22,6 +22,13 @@ FAILURE_CONFIRM_STATUS = 'failure'
 
 
 def process_report_slice(report_slice, request_obj):
+    """
+    Run all the modifiers on report slice and send modified host
+    to host-inventory
+    Args:
+        report_slice (dict): Contains hosts array
+        request_obj (dict): Object containing metadata of incoming request/report
+    """
     status = FAILURE_CONFIRM_STATUS
     LOG.info(f"Processing hosts in slice with id - {report_slice.get('report_slice_id')}")
     hosts = report_slice.get('hosts', [])
@@ -112,7 +119,7 @@ def send_message(kafka_topic, msg):
 
 
 def process_report(consumed_message, p, request_obj):
-    """Extract and Process Insights report"""
+    """Extract, Validate and Process report"""
     global producer
     producer = p
     request_obj.update({
@@ -176,7 +183,7 @@ def process_report(consumed_message, p, request_obj):
                                 LOG.warning(mismatch_message)
                                 continue
 
-                            # Here performance can be improved by using Async thread
+                            # FIXME - performance can be improved by using Async thread
                             process_report_slice(report_slice_json, request_obj)
                 log_report_summary(request_obj)
             except ValueError as error:
