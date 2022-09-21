@@ -11,6 +11,14 @@ def test_transform_os_kernel_field():
     assert host == {'system_profile': {'os_release': '7', 'os_kernel_version': '3.10.0'}}
     assert "os_kernel_version from '3.10.0-1127.el7.x86_64' to '3.10.0'" in transformed_obj['modified']
 
+    host = {'system_profile': {
+        'os_release': '7', 'os_kernel_version': '4.10.0+'
+    }}
+    transformed_obj = {'modified': []}
+    TransformOsKernalVersion().run(host, transformed_obj)
+    assert host == {'system_profile': {'os_release': '7', 'os_kernel_version': '4.10.0'}}
+    assert "os_kernel_version from '4.10.0+' to '4.10.0'" in transformed_obj['modified']
+
 
 def test_do_not_tranform_os_kernel_field():
     """Test do not transform os fields when already in format."""
