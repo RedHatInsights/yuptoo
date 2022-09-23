@@ -17,7 +17,7 @@ objects:
     - name: yuptoo-service
       podSpec:
         image: ${IMAGE}:${IMAGE_TAG}
-        minReplicas: ${{MIN_REPLICAS}}
+        replicas: ${{MIN_REPLICAS}}
         command: ["sh"]
         args: ["-c", "python -m main"]
         resources:
