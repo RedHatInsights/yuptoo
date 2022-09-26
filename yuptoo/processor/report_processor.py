@@ -71,7 +71,7 @@ def log_report_summary(request_obj):
     total_valid = total_fingerprints - len(request_obj['hosts_without_facts'])
     LOG.info(f"{total_valid}/{total_fingerprints} hosts are valid.")
     LOG.info(f"{request_obj['host_inventory_upload_count']}/{request_obj['total_host_count']}"
-             "hosts has been send to the inventory service.")
+             " hosts has been send to the inventory service.")
     if request_obj['hosts_without_facts']:
         LOG.warning(
             f"{len(request_obj['hosts_without_facts'])} host(s) found that contain(s) 0 canonical facts:"
@@ -90,30 +90,37 @@ def upload_to_host_inventory_via_kafka(host, request_obj):
             'platform_metadata': {'request_id': host['system_unique_id'],
                                   'b64_identity': request_obj['b64_identity']}
         }
-        send_message(UPLOAD_TOPIC, upload_msg)
-        host_uploaded.labels(
-                    org_id=request_obj['org_id']
-                ).inc()
-        request_obj['host_inventory_upload_count'] += 1
+        result = send_message(UPLOAD_TOPIC, upload_msg)
+        if result:
+            host_uploaded.labels(
+                        org_id=request_obj['org_id']
+                    ).inc()
+            request_obj['host_inventory_upload_count'] += 1
+            return
     except Exception as err:
-        host_upload_failures.labels(
+        LOG.error(f"The following error occurred: {err}")
+    host_upload_failures.labels(
                 org_id=request_obj['org_id']
             ).inc()
-        LOG.error(f"The following error occurred: {err}")
-
-
-def delivery_report(err, msg=None):
-    if err is not None:
-        LOG.error(f"Message delivery for topic {msg.topic()} failed: {err}")
-    else:
-        LOG.debug(f"Message delivered to {msg.topic()} [{msg.partition()}]")
 
 
 def send_message(kafka_topic, msg):
+
+    msg_sent = False
+
+    def delivery_report(err, msg=None):
+        if err is not None:
+            LOG.error(f"Message delivery for topic {msg.topic()} failed: {err}")
+        else:
+            nonlocal msg_sent
+            msg_sent = True
+            LOG.debug(f"Message delivered to {msg.topic()} [{msg.partition()}]")
+
     try:
         bytes = json.dumps(msg, ensure_ascii=False).encode("utf-8")
         producer.produce(kafka_topic, bytes, callback=delivery_report)
         producer.poll(1)
+        return msg_sent
     except KafkaException:
         LOG.error(f"Failed to produce message to [{UPLOAD_TOPIC}] topic.")
 
