@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from yuptoo.lib.metrics import archive_downloaded_success, archive_failed_to_download
 from yuptoo.lib.exceptions import FailDownloadException
 import logging
+import datetime
 
 LOG = logging.getLogger(__name__)
 
@@ -56,6 +57,22 @@ def download_report(consumed_message):
         raise FailDownloadException(
             f"Unexpected error for URL {report_url}. Error: {err}"
         )
+
+
+def tracker_message(request_obj, status, status_msg):
+
+    message = {
+        "account": request_obj.get("account"),
+        "org_id": request_obj.get("org_id"),
+        "request_id": request_obj.get("request_id"),
+        "payload_id": request_obj.get("request_id"),
+        "service": "yuptoo",
+        "status": status,
+        "status_msg": status_msg,
+        "date": datetime.datetime.now().isoformat(),
+    }
+
+    return message
 
 
 class Modifier(ABC):
