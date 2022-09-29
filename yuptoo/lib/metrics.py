@@ -42,7 +42,7 @@ kafka_failures = Counter(
 )
 
 incoming_hosts_counter = Counter(
-    'yupana_incoming_hosts_counter',
+    'yuptoo_incoming_hosts_counter',
     'Total number of hosts in report as per source',
     ["org_id", "source"]
 )
