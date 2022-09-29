@@ -1,4 +1,4 @@
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 import uuid
 import pytest
 
@@ -39,12 +39,12 @@ def test_process_report_without_facts():
     }
     request_object = {'org_id': consumed_message['org_id']}
     buffer_content = create_tar_buffer(report_files)
-    producer = Mock()
     with patch('yuptoo.processor.report_processor.download_report', return_value=buffer_content):
         with patch('yuptoo.processor.report_processor.HOSTS_TRANSFORMATION_ENABLED', 0):
             with patch('yuptoo.processor.report_processor.has_canonical_facts', return_value=0):
-                with pytest.raises(QPCReportException):
-                    process_report(consumed_message, producer, request_object)
+                with patch('yuptoo.processor.report_processor.send_message', return_value=0):
+                    with pytest.raises(QPCReportException):
+                        process_report(consumed_message, request_object)
 
 
 def test_process_report():
@@ -77,9 +77,9 @@ def test_process_report():
     }
     request_object = {'request_id': consumed_message['request_id'], 'org_id': consumed_message['org_id']}
     buffer_content = create_tar_buffer(report_files)
-    producer = Mock()
     with patch('yuptoo.processor.report_processor.upload_to_host_inventory_via_kafka', return_value=None) as mock:
         with patch('yuptoo.processor.report_processor.download_report', return_value=buffer_content):
             with patch('yuptoo.processor.report_processor.HOSTS_TRANSFORMATION_ENABLED', 0):
-                process_report(consumed_message, producer, request_object)
+                with patch('yuptoo.processor.report_processor.send_message', return_value=0):
+                    process_report(consumed_message, request_object)
     mock.assert_called_once

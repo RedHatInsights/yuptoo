@@ -1,6 +1,6 @@
 import json
 
-from yuptoo.lib.config import KAFKA_AUTO_COMMIT, ANNOUNCE_TOPIC, METRICS_PORT, KAFKA_BROKER
+from yuptoo.lib.config import KAFKA_AUTO_COMMIT, ANNOUNCE_TOPIC, METRICS_PORT, KAFKA_BROKER, TRACKER_TOPIC
 from yuptoo.lib.logger import initialize_logging, threadctx
 import logging
 from yuptoo.lib.exceptions import QPCKafkaMsgException, FailExtractException
@@ -9,6 +9,7 @@ from yuptoo.validators.qpc_message_validator import validate_qpc_message
 from yuptoo.processor.report_processor import process_report
 from yuptoo.lib import consume, produce
 from prometheus_client import start_http_server
+from yuptoo.processor.utils import tracker_message
 
 
 initialize_logging()
@@ -50,9 +51,13 @@ while True:
                 msg = json.loads(msg.value().decode("utf-8"))
                 msg['topic'] = topic
                 request_obj = validate_qpc_message(msg)
+                produce.send_message(
+                    TRACKER_TOPIC,
+                    tracker_message(request_obj, "received", "Payload received by yuptoo")
+                )
                 set_extra_log_data(request_obj)
                 consumer.commit()
-                process_report(msg, producer, request_obj)
+                process_report(msg, request_obj)
     except json.decoder.JSONDecodeError:
         LOG.error(f"Unable to decode kafka message: {msg.value()}")
     except QPCKafkaMsgException as message_error:

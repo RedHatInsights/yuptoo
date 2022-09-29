@@ -28,6 +28,7 @@ if CLOWDER_ENABLED:
     ANNOUNCE_TOPIC = KafkaTopics["platform.upload.announce"].name
     UPLOAD_TOPIC = KafkaTopics["platform.inventory.host-ingress"].name
     VALIDATION_TOPIC = KafkaTopics["platform.upload.validation"].name
+    TRACKER_TOPIC = KafkaTopics["platform.payload-status"].name
     METRICS_PORT = LoadedConfig.metricsPort
 else:
     INSIGHTS_KAFKA_HOST = os.getenv('INSIGHTS_KAFKA_HOST', 'localhost')
@@ -37,6 +38,7 @@ else:
     ANNOUNCE_TOPIC = os.getenv('ANNOUNCE_TOPIC', 'platform.upload.announce')
     VALIDATION_TOPIC = os.getenv('VALIDATION_TOPIC', 'platform.upload.validation')
     UPLOAD_TOPIC = os.getenv('UPLOAD_TOPIC', 'platform.inventory.host-ingress')
+    TRACKER_TOPIC = os.getenv('TRACKER_TOPIC', "platform.payload-status")
     METRICS_PORT = os.getenv("METRICS_PORT", 5005)
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()

@@ -5,18 +5,19 @@ import tarfile
 import json
 import logging
 from io import BytesIO
-from confluent_kafka import KafkaException
+
 
 from yuptoo.lib.config import (HOSTS_TRANSFORMATION_ENABLED,
-                               UPLOAD_TOPIC, VALIDATION_TOPIC)
+                               UPLOAD_TOPIC, VALIDATION_TOPIC, TRACKER_TOPIC)
 from yuptoo.lib.exceptions import FailExtractException, QPCReportException
 from yuptoo.validators.report_metadata_validator import validate_metadata_file
-from yuptoo.processor.utils import has_canonical_facts, print_transformed_info, download_report
+from yuptoo.processor.utils import (has_canonical_facts, print_transformed_info,
+                                    download_report, tracker_message)
 from yuptoo.lib.metrics import host_uploaded, host_upload_failures
+from yuptoo.lib.produce import send_message
 
 LOG = logging.getLogger(__name__)
 
-producer = None
 SUCCESS_CONFIRM_STATUS = 'success'
 FAILURE_CONFIRM_STATUS = 'failure'
 
@@ -70,8 +71,9 @@ def log_report_summary(request_obj):
     total_fingerprints = request_obj['candidate_hosts']
     total_valid = total_fingerprints - len(request_obj['hosts_without_facts'])
     LOG.info(f"{total_valid}/{total_fingerprints} hosts are valid.")
-    LOG.info(f"{request_obj['host_inventory_upload_count']}/{request_obj['total_host_count']}"
-             " hosts has been send to the inventory service.")
+    host_upload_msg = f"{request_obj['host_inventory_upload_count']}/{request_obj['total_host_count']}" \
+                      " hosts has been send to the inventory service."
+    LOG.info(host_upload_msg)
     if request_obj['hosts_without_facts']:
         LOG.warning(
             f"{len(request_obj['hosts_without_facts'])} host(s) found that contain(s) 0 canonical facts:"
@@ -80,6 +82,10 @@ def log_report_summary(request_obj):
     if total_fingerprints == 0:
         LOG.error('Report does not contain any valid hosts.')
         raise QPCReportException()
+    send_message(
+        TRACKER_TOPIC,
+        tracker_message(request_obj, "success", host_upload_msg)
+    )
 
 
 def upload_to_host_inventory_via_kafka(host, request_obj):
@@ -104,31 +110,8 @@ def upload_to_host_inventory_via_kafka(host, request_obj):
             ).inc()
 
 
-def send_message(kafka_topic, msg):
-
-    msg_sent = False
-
-    def delivery_report(err, msg=None):
-        if err is not None:
-            LOG.error(f"Message delivery for topic {msg.topic()} failed: {err}")
-        else:
-            nonlocal msg_sent
-            msg_sent = True
-            LOG.debug(f"Message delivered to {msg.topic()} [{msg.partition()}]")
-
-    try:
-        bytes = json.dumps(msg, ensure_ascii=False).encode("utf-8")
-        producer.produce(kafka_topic, bytes, callback=delivery_report)
-        producer.poll(1)
-        return msg_sent
-    except KafkaException:
-        LOG.error(f"Failed to produce message to [{UPLOAD_TOPIC}] topic.")
-
-
-def process_report(consumed_message, p, request_obj):
+def process_report(consumed_message, request_obj):
     """Extract, Validate and Process report"""
-    global producer
-    producer = p
     request_obj.update({
         "candidate_hosts": 0,
         "hosts_without_facts": [],
@@ -136,6 +119,10 @@ def process_report(consumed_message, p, request_obj):
         "host_inventory_upload_count": 0
     })
     report_tar = download_report(consumed_message)
+    send_message(
+        TRACKER_TOPIC,
+        tracker_message(request_obj, "processing", "Report Downloaded")
+    )
     try:  # pylint: disable=too-many-nested-blocks
         tar = tarfile.open(fileobj=BytesIO(report_tar), mode='r:*')
         files = tar.getmembers()

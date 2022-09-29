@@ -37,6 +37,8 @@ objects:
         partitions: 1
       - topicName: platform.upload.validation
         partitions: 1
+      - topicName: platform.payload-status
+        partitions: 1
 
 parameters:
 - description : ClowdEnvironment name

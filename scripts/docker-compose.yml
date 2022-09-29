@@ -17,6 +17,17 @@ services:
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:32181
       - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+
+  kafka-create-topics:
+    image: confluentinc/cp-kafka
+    command: "bash -c 'echo Waiting for Kafka to be ready... && \
+                       cub kafka-ready -b kafka:29092 1 20 && \
+                       kafka-topics --create --if-not-exists --topic platform.upload.announce --bootstrap-server kafka:29092 && \
+                       kafka-topics --create --if-not-exists --topic platform.inventory.host-ingress --bootstrap-server kafka:29092 && \
+                       kafka-topics --create --if-not-exists --topic platform.payload-status --bootstrap-server kafka:29092'"
+    depends_on:
+      - kafka
+
   minio:
     image: minio/minio
     command: server /data
@@ -95,6 +106,38 @@ services:
         POSTGRES_DB: insights
       ports:
         - "5432:5432"
+
+  payload-tracker-db:
+      image: postgres
+      restart: always
+      environment:
+          POSTGRES_PASSWORD: crc
+          POSTGRES_USER: crc
+          POSTGRES_DB: crc
+      ports:
+          - "5433:5432"
+
+  payload-tracker-go:
+    image: quay.io/cloudservices/payload-tracker-go:893b7b4
+    restart: always
+    command:
+      - /bin/sh
+      - -c
+      - |
+        ./pt-migration
+        ./pt-seeder
+        ./pt-consumer
+    depends_on:
+      - kafka
+      - payload-tracker-db
+    environment:
+      - DB_NAME=crc
+      - DB_USER=crc
+      - DB_PASSWORD=crc
+      - DB_HOST=payload-tracker-db
+      - DB_PORT=5432
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - VALIDATE_REQUEST_ID_LENGTH=30
 
 volumes:
   minio_conf:
