@@ -15,9 +15,9 @@ objects:
     - host-inventory
     deployments:
     - name: yuptoo-service
+      replicas: ${{MIN_REPLICAS}}
       podSpec:
         image: ${IMAGE}:${IMAGE_TAG}
-        replicas: ${{MIN_REPLICAS}}
         command: ["sh"]
         args: ["-c", "python -m main"]
         resources:
