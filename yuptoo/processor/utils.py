@@ -61,7 +61,7 @@ def download_report(consumed_message):
 
 def tracker_message(request_obj, status, status_msg):
 
-    message = {
+    return {
         "account": request_obj.get("account"),
         "org_id": request_obj.get("org_id"),
         "request_id": request_obj.get("request_id"),
@@ -71,8 +71,6 @@ def tracker_message(request_obj, status, status_msg):
         "status_msg": status_msg,
         "date": datetime.datetime.now().isoformat(),
     }
-
-    return message
 
 
 class Modifier(ABC):
