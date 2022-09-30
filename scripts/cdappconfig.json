@@ -1,4 +1,20 @@
 {
+    "database":{
+                "name": "postgres",
+                "password": "postgres",
+                "username": "postgres",
+                "hostname": "localhost",
+                "port": "15432"
+
+    },
+    "logging": {
+		"cloudwatch":{
+			"accessKeyId": null,
+			"secretAccessKey":null,
+			"region":null,
+			"logGroup":null
+		}
+    },
     "kafka": {
         "brokers": [
             {
@@ -6,10 +22,10 @@
                 "port": 29092,
                 "cacert": "",
                 "sasl": {
-                    "securityProtocol": "",
-                    "saslMechanism": "",
-                    "username": "",
-                    "password": ""
+                    "securityProtocol": "PLAINTEXT",
+                    "saslMechanism": "PLAIN",
+                    "username": null,
+                    "password": null
                 }
 
             }
