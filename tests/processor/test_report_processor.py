@@ -43,8 +43,9 @@ def test_process_report_without_facts():
         with patch('yuptoo.processor.report_processor.HOSTS_TRANSFORMATION_ENABLED', 0):
             with patch('yuptoo.processor.report_processor.has_canonical_facts', return_value=0):
                 with patch('yuptoo.processor.report_processor.send_message', return_value=0):
-                    with pytest.raises(QPCReportException):
-                        process_report(consumed_message, request_object)
+                    with patch('yuptoo.lib.produce.producer'):
+                        with pytest.raises(QPCReportException):
+                            process_report(consumed_message, request_object)
 
 
 def test_process_report():
@@ -81,5 +82,6 @@ def test_process_report():
         with patch('yuptoo.processor.report_processor.download_report', return_value=buffer_content):
             with patch('yuptoo.processor.report_processor.HOSTS_TRANSFORMATION_ENABLED', 0):
                 with patch('yuptoo.processor.report_processor.send_message', return_value=0):
-                    process_report(consumed_message, request_object)
+                    with patch('yuptoo.lib.produce.producer'):
+                        process_report(consumed_message, request_object)
     mock.assert_called_once

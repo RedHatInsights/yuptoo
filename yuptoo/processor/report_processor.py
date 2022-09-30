@@ -13,7 +13,7 @@ from yuptoo.lib.exceptions import FailExtractException, QPCReportException
 from yuptoo.validators.report_metadata_validator import validate_metadata_file
 from yuptoo.processor.utils import (has_canonical_facts, print_transformed_info,
                                     download_report, tracker_message)
-from yuptoo.lib.metrics import host_uploaded, host_upload_failures
+from yuptoo.lib.metrics import host_upload_failures
 from yuptoo.lib.produce import send_message
 
 LOG = logging.getLogger(__name__)
@@ -96,18 +96,9 @@ def upload_to_host_inventory_via_kafka(host, request_obj):
             'platform_metadata': {'request_id': host['system_unique_id'],
                                   'b64_identity': request_obj['b64_identity']}
         }
-        result = send_message(UPLOAD_TOPIC, upload_msg)
-        if result:
-            host_uploaded.labels(
-                        org_id=request_obj['org_id']
-                    ).inc()
-            request_obj['host_inventory_upload_count'] += 1
-            return
+        send_message(UPLOAD_TOPIC, upload_msg, request_obj)
     except Exception as err:
         LOG.error(f"The following error occurred: {err}")
-    host_upload_failures.labels(
-                org_id=request_obj['org_id']
-            ).inc()
 
 
 def process_report(consumed_message, request_obj):
@@ -179,6 +170,9 @@ def process_report(consumed_message, request_obj):
 
                             # FIXME - performance can be improved by using Async thread
                             process_report_slice(report_slice_json, request_obj)
+
+                from yuptoo.lib.produce import producer
+                producer.flush()
                 log_report_summary(request_obj)
             except ValueError as error:
                 raise FailExtractException(
