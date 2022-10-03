@@ -62,9 +62,7 @@ def process_report_slice(report_slice, request_obj):
             upload_to_host_inventory_via_kafka(host, request_obj)
         else:
             request_obj['hosts_without_facts'].append({report_slice.get('report_slice_id'): host['fqdn']})
-            host_upload_failures.labels(
-                org_id=request_obj['org_id']
-            ).inc()
+            host_upload_failures.inc()
 
 
 def log_report_summary(request_obj):

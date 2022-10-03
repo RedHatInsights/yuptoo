@@ -53,7 +53,7 @@ def download_report(consumed_message):
         archive_downloaded_success.inc()
         return download_response.content
     except Exception as err:
-        archive_failed_to_download.labels(org_id=consumed_message.get('org_id')).inc()
+        archive_failed_to_download.inc()
         raise FailDownloadException(
             f"Unexpected error for URL {report_url}. Error: {err}"
         )

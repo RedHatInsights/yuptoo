@@ -61,7 +61,6 @@ def validate_metadata_file(tar, metadata, request_obj):
         else:
             invalid_slice_ids[report_slice_id] = num_hosts
     incoming_hosts_counter.labels(
-        org_id=request_obj['org_id'],
         source=request_obj['source']).inc(total_hosts_in_report)
 
     # if any reports were over the max number of hosts, we need to log
