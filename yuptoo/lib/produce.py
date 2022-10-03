@@ -28,15 +28,11 @@ def send_message(kafka_topic, msg, request_obj=None):
         if err is not None:
             LOG.error(f"Message delivery for topic {msg.topic()} failed: {err}")
             if is_msg_for_hbi:
-                host_upload_failures.labels(
-                        org_id=request_obj['org_id']
-                    ).inc()
+                host_upload_failures.inc()
         else:
             if is_msg_for_hbi:
                 request_obj['host_inventory_upload_count'] += 1
-                host_uploaded.labels(
-                        org_id=request_obj['org_id']
-                    ).inc()
+                host_uploaded.inc()
             LOG.debug(f"Message delivered to {msg.topic()} [{msg.partition()}]")
 
     try:

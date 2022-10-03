@@ -61,19 +61,13 @@ while True:
     except json.decoder.JSONDecodeError:
         LOG.error(f"Unable to decode kafka message: {msg.value()}")
     except QPCKafkaMsgException as message_error:
-        kafka_failures.labels(
-            org_id=msg['org_id']
-        ).inc()
+        kafka_failures.inc()
         LOG.error(f"Error processing Kafka message.  Message: {msg}, Error: {message_error}")
     except FailExtractException as err:
-        extract_report_slices_failures.labels(
-                    org_id=request_obj['org_id']
-                ).inc()
+        extract_report_slices_failures.inc()
         LOG.error(f"Error Extracting report.  Message: {msg}, Error: {err}")
     except Exception as err:
-        report_processing_exceptions.labels(
-            org_id=msg['org_id']
-        ).inc()
+        report_processing_exceptions.inc()
         LOG.error(f"An error occurred during message processing: {repr(err)}")
     finally:
         if not KAFKA_AUTO_COMMIT:
