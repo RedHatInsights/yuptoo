@@ -9,6 +9,8 @@ class TransformOsKernalVersion(Modifier):
 
         if isinstance(os_kernel_version, str):
             version_value = os_kernel_version.split('-')[0]
+            if version_value[-1] == '+':
+                version_value = version_value[:-1]
             host['system_profile']['os_kernel_version'] = version_value
             transformed_obj['modified'].append(
                 "os_kernel_version from '%s' to '%s'"
