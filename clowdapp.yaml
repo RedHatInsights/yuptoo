@@ -14,7 +14,7 @@ objects:
     - ingress
     - host-inventory
     deployments:
-    - name: yuptoo-service
+    - name: service
       replicas: ${{MIN_REPLICAS}}
       podSpec:
         image: ${IMAGE}:${IMAGE_TAG}
