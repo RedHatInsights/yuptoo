@@ -7,6 +7,10 @@ class TransformTags(Modifier):
         if tags:
             tags_modified = False
             for tag in tags:
+
+                if len(str(tag['value'])) > 255:
+                    tag['value'] = "Truncated.Longer than maximum length 255."
+
                 if tag['value'] is None or isinstance(tag['value'], str):
                     continue
 
@@ -16,7 +20,6 @@ class TransformTags(Modifier):
                     tag['value'] = 'false'
                 else:
                     tag['value'] = str(tag['value'])
-
                 tags_modified = True
 
             if tags_modified:
