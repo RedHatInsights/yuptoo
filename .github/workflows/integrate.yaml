@@ -48,9 +48,17 @@ jobs:
             pip install pipenv
             pipenv install --dev
 
+      - name: Install pytest-cov to produce coverage reports
+        run: |
+            pip install pytest-cov
+
       - name: Test with pytest
         run: |
             pipenv run python -m pytest --cov=yuptoo tests
 
-
-
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true
+          verbose: true
+          flags: unittests
