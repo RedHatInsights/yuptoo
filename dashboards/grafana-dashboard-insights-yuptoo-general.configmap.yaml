@@ -629,7 +629,7 @@ data:
                 "uid": "${datasource}"
               },
               "editorMode": "code",
-              "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform-mq-stage.platform.upload.announce\", group=\"qpc-group\"})",
+              "expr": "sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\", group=\"qpc-group\"})",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -713,7 +713,7 @@ data:
       },
       "timezone": "",
       "title": "Yuptoo",
-      "uid": "pGzJEgoGf",
+      "uid": "pGzJEgoGg",
       "version": 3,
       "weekStart": ""
     }
