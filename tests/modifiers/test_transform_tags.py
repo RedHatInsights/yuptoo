@@ -46,8 +46,8 @@ def test_transform_tags_value_to_string():
     assert 'tags' in transformed_obj['modified']
 
 
-def test_transform_tags_255_char():
-    """Test tags transformation for host for more than 255 char"""
+def test_transform_tags_250_char():
+    """Test tags transformation for host for more than 250 char"""
     host = {'tags': [
         {
             'namespace': 'satellite_parameter',
@@ -75,7 +75,7 @@ def test_transform_tags_255_char():
             {
                 'namespace': 'satellite_parameter',
                 'key': 'host_registration_insights',
-                'value': 'Truncated.Longer than maximum length 255.'
+                'value': 'Original value exceeds 250 characters.'
             },
             {
                 'namespace': 'satellite_parameter',

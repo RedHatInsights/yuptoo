@@ -8,8 +8,8 @@ class TransformTags(Modifier):
             tags_modified = False
             for tag in tags:
 
-                if len(str(tag['value'])) > 255:
-                    tag['value'] = "Truncated.Longer than maximum length 255."
+                if len(str(tag['value'])) > 250:
+                    tag['value'] = "Original value exceeds 250 characters."
 
                 if tag['value'] is None or isinstance(tag['value'], str):
                     continue
