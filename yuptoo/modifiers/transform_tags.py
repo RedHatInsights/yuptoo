@@ -10,6 +10,7 @@ class TransformTags(Modifier):
 
                 if len(str(tag['value'])) > 250:
                     tag['value'] = "Original value exceeds 250 characters."
+                    tags_modified = True
 
                 if tag['value'] is None or isinstance(tag['value'], str):
                     continue
