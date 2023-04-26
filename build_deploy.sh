@@ -25,7 +25,7 @@ docker --config="$DOCKER_CONF" push "${IMAGE_NAME}:${IMAGE_TAG}"
 
 
 if [[ $GIT_BRANCH == *"security-compliance"* ]]; then
-    docker --config="$DOCKER_CONF" tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE}:security-compliance"
+    docker --config="$DOCKER_CONF" tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:security-compliance"
     docker --config="$DOCKER_CONF" push "${IMAGE_NAME}:security-compliance"
 else
     for ADDITIONAL_TAG in $ADDITIONAL_TAGS; do
