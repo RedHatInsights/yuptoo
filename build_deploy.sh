@@ -5,7 +5,6 @@ set -exv
 IMAGE_NAME="quay.io/cloudservices/yuptoo"
 IMAGE_TAG=$(git rev-parse --short=7 HEAD)
 ADDITIONAL_TAGS="qa latest"
-SECURITY_COMPLIANCE_TAG="sc-$(date +%Y%m%d)"
 
 if [[ -z "$QUAY_USER" || -z "$QUAY_TOKEN" ]]; then
     echo "QUAY_USER and QUAY_TOKEN must be set"
@@ -26,8 +25,8 @@ docker --config="$DOCKER_CONF" push "${IMAGE_NAME}:${IMAGE_TAG}"
 
 
 if [[ $GIT_BRANCH == *"security-compliance"* ]]; then
-    docker --config="$DOCKER_CONF" tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:${SECURITY_COMPLIANCE_TAG}"
-    docker --config="$DOCKER_CONF" push "${IMAGE_NAME}:${SECURITY_COMPLIANCE_TAG}"
+    docker --config="$DOCKER_CONF" tag "${IMAGE}:${IMAGE_TAG}" "${IMAGE}:security-compliance"
+    docker --config="$DOCKER_CONF" push "${IMAGE}:security-compliance"
 else
     for ADDITIONAL_TAG in $ADDITIONAL_TAGS; do
         docker --config="$DOCKER_CONF" tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:${ADDITIONAL_TAG}"
