@@ -4,17 +4,17 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [packages]
-confluent-kafka = "*"
-requests = "*"
-app-common-python = "*"
-logstash-formatter = "*"
-watchtower = "*"
-prometheus-client = "*"
+confluent-kafka = "==2.0.2"
+requests = "==2.28.2"
+app-common-python = "==0.2.5"
+logstash-formatter = "==0.5.17"
+watchtower = "==3.0.1"
+prometheus-client = "==0.16.0"
 
 [requires]
 python_version = "3.9"
 
 [dev-packages]
-flake8 = "*"
-pytest = "~=7.2.0"
-pytest-cov = "*"
+flake8 = "==6.0.0"
+pytest = "==7.2.1"
+pytest-cov = "==4.0.0"
