@@ -24,5 +24,5 @@ jobs:
       - name: Check Commit Type
         uses: gsactions/commit-message-checker@v1
         with:
-          pattern: '^(Refs|Fixes) #YUPTOO-[0-9]+ - .+$'
-          error: 'Commit message should start with "Fixes #YUPTOO-<issue number> - "'
+          pattern: '^((Refs|Fixes)\s{1}#)?[a-zA-Z]+-[0-9]+ - .+$'
+          error: 'Commit message should include a ticket number. Example: "Fixes #RHINENG-1234 - "'
