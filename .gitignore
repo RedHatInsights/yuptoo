@@ -13,3 +13,4 @@ tmp
 scripts/minio-conf/
 scripts/minio-data/
 temp/
+.idea
