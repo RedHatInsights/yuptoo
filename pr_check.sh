@@ -10,6 +10,7 @@ export IQE_PLUGINS="foreman-rh-cloud"         # name of the IQE plugin for this 
 export IQE_MARKER_EXPRESSION="yupana_smoke"   # This is the value passed to pytest -m
 export IQE_FILTER_EXPRESSION=""               # This is the value passed to pytest -k
 export IQE_CJI_TIMEOUT="30m"                  # This is the time to wait for smoke test to complete or fail
+export IQE_PARALLEL_ENABLED="false"
 
 # Install bonfire repo/initialize
 CICD_URL=https://raw.githubusercontent.com/RedHatInsights/bonfire/master/cicd
@@ -20,6 +21,10 @@ source $CICD_ROOT/build.sh
 
 # Deploy to an ephemeral namespace for testing
 source $CICD_ROOT/deploy_ephemeral_env.sh
+
+# Enable smoke test results upload to report portal
+export IQE_RP_ARGS="true"
+export IQE_IBUTSU_SOURCE="yuptoo-ephemeral-${IMAGE_TAG}" 
 
 # Run smoke tests with ClowdJobInvocation
 source $CICD_ROOT/cji_smoke_test.sh
