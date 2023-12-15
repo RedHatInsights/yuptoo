@@ -13,7 +13,7 @@ producer = None
 def init_producer():
     global producer
     connection_object = {
-        'bootstrap.servers': INSIGHTS_KAFKA_ADDRESS,
+        'bootstrap.servers': ",".join(INSIGHTS_KAFKA_ADDRESS),
         'message.max.bytes': KAFKA_PRODUCER_OVERRIDE_MAX_REQUEST_SIZE
     }
     kafka_auth_config(connection_object)

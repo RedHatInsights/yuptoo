@@ -22,9 +22,9 @@ def kafka_auth_config(connection_object):
 
 if CLOWDER_ENABLED:
     LOG.info("Using Clowder Operator...")
-    from app_common_python import LoadedConfig, KafkaTopics
+    from app_common_python import LoadedConfig, KafkaTopics, KafkaServers
     KAFKA_BROKER = LoadedConfig.kafka.brokers[0]
-    INSIGHTS_KAFKA_ADDRESS = KAFKA_BROKER.hostname + ":" + str(KAFKA_BROKER.port)
+    INSIGHTS_KAFKA_ADDRESS = KafkaServers
     ANNOUNCE_TOPIC = KafkaTopics["platform.upload.announce"].name
     UPLOAD_TOPIC = KafkaTopics["platform.inventory.host-ingress"].name
     VALIDATION_TOPIC = KafkaTopics["platform.upload.validation"].name

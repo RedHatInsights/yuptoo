@@ -10,7 +10,7 @@ from yuptoo.lib.config import (
 
 def init_consumer():
     connection_object = {
-        'bootstrap.servers': INSIGHTS_KAFKA_ADDRESS,
+        'bootstrap.servers': ",".join(INSIGHTS_KAFKA_ADDRESS),
         'group.id': KAFKA_CONSUMER_GROUP_ID,
         'enable.auto.commit': KAFKA_AUTO_COMMIT
     }
