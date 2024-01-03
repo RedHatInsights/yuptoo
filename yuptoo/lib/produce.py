@@ -1,5 +1,5 @@
 from confluent_kafka import Producer, KafkaException
-from yuptoo.lib.config import (INSIGHTS_KAFKA_ADDRESS, KAFKA_PRODUCER_OVERRIDE_MAX_REQUEST_SIZE,
+from yuptoo.lib.config import (BOOTSTRAP_SERVERS, KAFKA_PRODUCER_OVERRIDE_MAX_REQUEST_SIZE,
                                kafka_auth_config, UPLOAD_TOPIC)
 from functools import partial
 from yuptoo.lib.metrics import host_uploaded, host_upload_failures
@@ -13,7 +13,7 @@ producer = None
 def init_producer():
     global producer
     connection_object = {
-        'bootstrap.servers': INSIGHTS_KAFKA_ADDRESS,
+        'bootstrap.servers': ",".join(BOOTSTRAP_SERVERS),
         'message.max.bytes': KAFKA_PRODUCER_OVERRIDE_MAX_REQUEST_SIZE
     }
     kafka_auth_config(connection_object)
