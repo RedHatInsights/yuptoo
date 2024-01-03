@@ -1,7 +1,7 @@
 from confluent_kafka import Consumer
 from yuptoo.lib.config import (
         KAFKA_AUTO_COMMIT,
-        INSIGHTS_KAFKA_ADDRESS,
+        BOOTSTRAP_SERVERS,
         ANNOUNCE_TOPIC,
         KAFKA_CONSUMER_GROUP_ID,
         kafka_auth_config
@@ -10,7 +10,7 @@ from yuptoo.lib.config import (
 
 def init_consumer():
     connection_object = {
-        'bootstrap.servers': ",".join(INSIGHTS_KAFKA_ADDRESS),
+        'bootstrap.servers': ",".join(BOOTSTRAP_SERVERS),
         'group.id': KAFKA_CONSUMER_GROUP_ID,
         'enable.auto.commit': KAFKA_AUTO_COMMIT
     }

@@ -24,7 +24,7 @@ if CLOWDER_ENABLED:
     LOG.info("Using Clowder Operator...")
     from app_common_python import LoadedConfig, KafkaTopics, KafkaServers
     KAFKA_BROKER = LoadedConfig.kafka.brokers[0]
-    INSIGHTS_KAFKA_ADDRESS = KafkaServers
+    BOOTSTRAP_SERVERS = KafkaServers
     ANNOUNCE_TOPIC = KafkaTopics["platform.upload.announce"].name
     UPLOAD_TOPIC = KafkaTopics["platform.inventory.host-ingress"].name
     VALIDATION_TOPIC = KafkaTopics["platform.upload.validation"].name
@@ -33,7 +33,7 @@ if CLOWDER_ENABLED:
 else:
     INSIGHTS_KAFKA_HOST = os.getenv('INSIGHTS_KAFKA_HOST', 'localhost')
     INSIGHTS_KAFKA_PORT = os.getenv('INSIGHTS_KAFKA_PORT', '29092')
-    INSIGHTS_KAFKA_ADDRESS = f'{INSIGHTS_KAFKA_HOST}:{INSIGHTS_KAFKA_PORT}'
+    BOOTSTRAP_SERVERS = f'{INSIGHTS_KAFKA_HOST}:{INSIGHTS_KAFKA_PORT}'
     KAFKA_BROKER = None
     ANNOUNCE_TOPIC = os.getenv('ANNOUNCE_TOPIC', 'platform.upload.announce')
     VALIDATION_TOPIC = os.getenv('VALIDATION_TOPIC', 'platform.upload.validation')
