@@ -25,7 +25,7 @@ def print_transformed_info(request_obj, host_id, transformed_obj):
 
 
 def has_canonical_facts(host):
-    CANONICAL_FACTS = ['insights_client_id', 'bios_uuid', 'ip_addresses', 'mac_addresses',
+    CANONICAL_FACTS = ['insights_id', 'bios_uuid', 'ip_addresses', 'mac_addresses',
                        'vm_uuid', 'etc_machine_id', 'subscription_manager_id']
     for fact in CANONICAL_FACTS:
         if host.get(fact):

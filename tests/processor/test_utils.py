@@ -34,7 +34,7 @@ def test_download_report_without_url():
 
 
 def test_has_canonical_facts_true():
-    host = {'insights_client_id': '123'}
+    host = {'insights_id': '123'}
     result = has_canonical_facts(host)
     assert result is True
 
