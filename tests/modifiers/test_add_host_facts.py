@@ -16,6 +16,7 @@ def test_add_host_facts():
                    'report_platform_id': '123', 'source': 'satellite', 'request_id': uuid1}
     AddHostFacts().run(host, transformed_obj, request_obj=request_obj)
     assert host['facts'][0]['namespace'] == 'yupana'
+    assert host['reporter'] == 'satellite'
     assert 'facts' in transformed_obj['modified']
 
 
