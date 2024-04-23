@@ -39,7 +39,7 @@ class AddHostFacts(Modifier):
             yuptoo_facts['facts']['account'] = request_obj['account']
         host_facts.append(yuptoo_facts)
         host['stale_timestamp'] = self.get_stale_time(request_obj)
-        host['reporter'] = 'discovery' if request_obj['source'] == "discovery" else 'satellite'
+        host['reporter'] = 'yupana'
         host['facts'] = host_facts
         if cert_cn and ('system_profile' in host):
             host['system_profile']['owner_id'] = cert_cn
