@@ -5,11 +5,11 @@ A client(rh-cloud-plugin/satellite) will create a specially crafted tarball and 
 https://github.com/RedHatInsights/yuptoo[Code Repository]
 
 == Architectural Diagram
-image::yuptoo.png[]
+image::../images/yuptoo.png[]
 
 == How It Works
 The following sequence diagram shows the data flow and processing of payload recevied on `platform.upload.announce` kafka topic.
 
-image::sequence_diagram.png[]
+image::../images/sequence_diagram.png[]
 
 ---
