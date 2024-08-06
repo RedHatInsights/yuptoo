@@ -1,5 +1,6 @@
 FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
 
+
 RUN microdnf module enable python39:3.9 && \
     microdnf install --setopt=tsflags=nodocs -y python39 && \
     microdnf upgrade -y && \
