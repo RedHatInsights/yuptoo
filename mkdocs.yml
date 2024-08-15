@@ -1,0 +1,4 @@
+docs_dir: docs/
+site_name: Yuptoo Documentation
+plugins:
+  - techdocs-core
