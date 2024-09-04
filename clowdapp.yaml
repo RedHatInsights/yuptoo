@@ -10,6 +10,8 @@ objects:
     name: yuptoo
   spec:
     envName: ${ENV_NAME}
+    testing:
+      iqePlugin: foreman-rh-cloud
     dependencies:
     - ingress
     - host-inventory
