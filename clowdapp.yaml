@@ -13,6 +13,8 @@ objects:
     dependencies:
     - ingress
     - host-inventory
+  testing:
+    iqePlugin: foreman-rh-cloud
     deployments:
     - name: service
       replicas: ${{MIN_REPLICAS}}
