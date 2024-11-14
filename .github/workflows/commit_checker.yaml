@@ -22,7 +22,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check Commit Type
-        uses: gsactions/commit-message-checker@v1
+        uses: gsactions/commit-message-checker@v2
         with:
-          pattern: '^((Refs|Fixes)\s{1}#)?[a-zA-Z]+-[0-9]+ - .+$'
-          error: 'Commit message should include a ticket number. Example: "Fixes #RHINENG-1234 - "'
+          pattern: '^(feat|fix|chore|refactor|test|ci|build|([A-Z]+-[0-9]+))(\(\w+\))?(:| -) .+$'
+          error: 'Commit message should start with a jira key or any keyword feat/fix/chore/refactor/test/ci/build. Example: "RHINENG-1234: xxx", "chore: xxx"'
+      - name: Check Line Length
+        uses: gsactions/commit-message-checker@v2
+        with:
+          pattern: '^[^#].{74}'
+          error: 'The maximum line length of 74 characters is exceeded.'
+          excludeDescription: 'true' # optional: this excludes the description body of a pull request
+          excludeTitle: 'true' # optional: this excludes the title of a pull request
