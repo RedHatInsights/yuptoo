@@ -22,7 +22,7 @@ jobs:
           flags: 'gim'
           error: 'Commit message should start with a jira key or any keyword feat/fix/chore/refactor/test/ci/build. Example: "RHINENG-1234: xxx", "chore: xxx"'
           excludeDescription: 'true' # optional: this excludes the description body of a pull request
-          excludeTitle: 'true' # optional: this excludes the title of a pull request
+          # excludeTitle: 'true' # optional: this excludes the title of a pull request
           checkAllCommitMessages: 'true' # optional: this checks all commits associated with a pull request
           accessToken: ${{ secrets.GITHUB_TOKEN }} # github access token is only required if checkAllCommitMessages is true
       - name: Check Commit Length
