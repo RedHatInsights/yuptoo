@@ -15,15 +15,22 @@ jobs:
     name: Check Commit Message
     runs-on: ubuntu-latest
     steps:
-      - name: Check Commit Type
+      - name: Check Commit Format
         uses: gsactions/commit-message-checker@v2
         with:
-          pattern: '^(feat|fix|chore|refactor|test|ci|build|([A-Z]+-[0-9]+))(\(\w+\))?(:| -) .+$'
+          pattern: '^(feat|fix|chore|refactor|test|ci|build|([A-Z]+-[0-9]+))(\(\w+\))?(:| -) .+'
+          flags: 'gim'
           error: 'Commit message should start with a jira key or any keyword feat/fix/chore/refactor/test/ci/build. Example: "RHINENG-1234: xxx", "chore: xxx"'
-      - name: Check Line Length
+          excludeDescription: 'true' # optional: this excludes the description body of a pull request
+          # excludeTitle: 'true' # optional: this excludes the title of a pull request
+          checkAllCommitMessages: 'true' # optional: this checks all commits associated with a pull request
+          accessToken: ${{ secrets.GITHUB_TOKEN }} # github access token is only required if checkAllCommitMessages is true
+      - name: Check Commit Length
         uses: gsactions/commit-message-checker@v2
         with:
-          pattern: '^[^#].{74}'
-          error: 'The maximum line length of 74 characters is exceeded.'
+          pattern: '^.{10,70}(\n(\n.{0,100})*)?$'
+          error: 'The maximum line length be exceeded. Requires the first line to contain 10-70 characters and, if the message continues, the second line must be empty and the following lines 0-100 characters long.'
           excludeDescription: 'true' # optional: this excludes the description body of a pull request
-          excludeTitle: 'true' # optional: this excludes the title of a pull request
+          # excludeTitle: 'true' # optional: this excludes the title of a pull request
+          checkAllCommitMessages: 'true' # optional: this checks all commits associated with a pull request
+          accessToken: ${{ secrets.GITHUB_TOKEN }} # github access token is only required if checkAllCommitMessages is true
