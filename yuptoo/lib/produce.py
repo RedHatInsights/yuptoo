@@ -38,7 +38,9 @@ def send_message(kafka_topic, msg, request_obj=None):
     try:
         bytes = json.dumps(msg, ensure_ascii=False).encode("utf-8")
         if kafka_topic == UPLOAD_TOPIC:
-            producer.produce(kafka_topic, bytes, callback=partial(delivery_report, is_msg_for_hbi=True))
+            org_id = request_obj.get('org_id') if request_obj else None
+            key = org_id.encode("utf-8") if org_id else None
+            producer.produce(kafka_topic, bytes, key, callback=partial(delivery_report, is_msg_for_hbi=True))
         else:
             producer.produce(kafka_topic, bytes, callback=delivery_report)
         producer.poll(1)
