@@ -94,7 +94,7 @@ def upload_to_host_inventory_via_kafka(host, request_obj):
             'platform_metadata': {'request_id': host['system_unique_id'],
                                   'b64_identity': request_obj['b64_identity']}
         }
-        send_message(UPLOAD_TOPIC, upload_msg, request_obj)
+        send_message(UPLOAD_TOPIC, upload_msg, host.org_id, request_obj)
     except Exception as err:
         LOG.error(f"The following error occurred: {err}")
 
