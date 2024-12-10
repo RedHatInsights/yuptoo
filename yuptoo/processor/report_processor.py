@@ -90,6 +90,7 @@ def upload_to_host_inventory_via_kafka(host, request_obj):
     try:
         upload_msg = {
             'operation': 'add_host',
+            'key': host.org_id,
             'data': host,
             'platform_metadata': {'request_id': host['system_unique_id'],
                                   'b64_identity': request_obj['b64_identity']}
