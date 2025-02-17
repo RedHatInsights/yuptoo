@@ -4,12 +4,13 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [packages]
-confluent-kafka = "*"
-requests = "*"
 app-common-python = "*"
+confluent-kafka = "*"
+insights-core = "==3.5.4"
 logstash-formatter = "*"
-watchtower = "*"
 prometheus-client = "*"
+requests = "*"
+watchtower = "*"
 
 [requires]
 python_version = "3.11"
