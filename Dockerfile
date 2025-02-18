@@ -1,12 +1,13 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
+FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
 
-RUN microdnf module enable python39:3.9 && \
-    microdnf install --setopt=tsflags=nodocs -y python39 && \
+RUN microdnf install --setopt=tsflags=nodocs -y python3.11 python3.11-pip which && \
     microdnf upgrade -y && \
     microdnf clean all
 
 ENV APP_ROOT=/opt/app-root
 WORKDIR $APP_ROOT/src/
+
+RUN set -ex && if [ -e `which python3.11` ]; then ln -s `which python3.11` /usr/local/bin/python; fi
 
 COPY Pipfile Pipfile.lock main.py ${APP_ROOT}/src/
 RUN python -m pip install --upgrade pip && \
