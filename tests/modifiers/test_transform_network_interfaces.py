@@ -41,7 +41,7 @@ def test_remove_nic_when_empty_string_in_name():
     assert host == {'system_profile': {
                     'network_interfaces': [
                         {
-                            'ipv4_addresses': [], 'ipv6_addresses': [], 'name':'eth0'
+                            'ipv4_addresses': [], 'ipv6_addresses': [], 'name': 'eth0'
                         }
                         ]}
                     }
@@ -55,9 +55,9 @@ def test_remove_empty_strings_in_ipv6_addresses():
             'network_interfaces': [
                 {'ipv4_addresses': [],
                     'ipv6_addresses': ['', ipv6_address, ''],
-                    'name':'eth0'},
+                    'name': 'eth0'},
                 {'ipv4_addresses': [],
-                    'ipv6_addresses': [''], 'name':'eth1'}]
+                    'ipv6_addresses': [''], 'name': 'eth1'}]
         }}
 
     transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
@@ -67,9 +67,9 @@ def test_remove_empty_strings_in_ipv6_addresses():
                 'network_interfaces': [
                     {'ipv4_addresses': [],
                         'ipv6_addresses': [ipv6_address],
-                        'name':'eth0'},
+                        'name': 'eth0'},
                     {'ipv4_addresses': [],
-                        'ipv6_addresses': [], 'name':'eth1'}]
+                        'ipv6_addresses': [], 'name': 'eth1'}]
             }
         }
     assert host == result
@@ -95,7 +95,7 @@ def test_do_not_run_mtu_transformation_when_not_exists():
             'system_profile': {
                 'network_interfaces': [
                     {'ipv4_addresses': [], 'ipv6_addresses': [],
-                        'name':'eth0'}]
+                        'name': 'eth0'}]
             }
         }
     assert host == result
@@ -116,7 +116,7 @@ def test_do_not_run_mtu_transformation_when_none():
             'system_profile': {
                 'network_interfaces': [
                     {'ipv4_addresses': [], 'ipv6_addresses': [],
-                        'mtu':None, 'name':'eth0'}]
+                        'mtu': None, 'name': 'eth0'}]
             }
         }
     assert host == result
