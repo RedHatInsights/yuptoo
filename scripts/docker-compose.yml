@@ -62,6 +62,7 @@ services:
     environment:
       - INGRESS_STAGEBUCKET=insights-upload-perma
         # VALIDTOPICS is required. This is derived from content type. ex: vnd.redhat.qpc.thing+tgz
+      - INGRESS_VALID_UPLOAD_TYPES=qpc
       - INGRESS_VALIDTOPICS=qpc
       - OPENSHIFT_BUILD_COMMIT=somestring
       - INGRESS_MAXSIZE=104857600
