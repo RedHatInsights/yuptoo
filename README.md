@@ -35,3 +35,23 @@ For linting run the below command.
 ```
 pipenv run flake8
 ```
+
+## Running with Docker Compose
+
+Two docker-compose files are made available in this repo for standing up a local dev environment. The `full-stack.yml` file stands up ingress, kafka, yuptoo, minio, and inventory components so that the entire first bits of the platform pipeline can be tested. The `docker-compose.yml` file stands up services without yuptoo, the yuptoo can be run manaully in local for development tests.
+
+Stand Up Full Stack
+
+```sh
+cd scripts && source .env && sudo docker-compose -f full-stack.yml up
+```
+
+Stand Up Yuptoo Manually outside the docker-compose
+
+```sh
+cd scripts && source .env && sudo docker-compose up
+```
+Read more about local development tests env - [docs/local_environment.md](https://github.com/RedHatInsights/yuptoo/tree/main/docs/local_environment.md)
+
+
+**NOTE**: The full stack expects you to have an ingress and inventory image available, by default, those will be pulled from quay.io. See those projects for steps for building the images needed.
