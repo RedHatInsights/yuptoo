@@ -31,9 +31,7 @@ if CLOWDER_ENABLED:
     TRACKER_TOPIC = KafkaTopics["platform.payload-status"].name
     METRICS_PORT = LoadedConfig.metricsPort
 else:
-    INSIGHTS_KAFKA_HOST = os.getenv('INSIGHTS_KAFKA_HOST', 'localhost')
-    INSIGHTS_KAFKA_PORT = os.getenv('INSIGHTS_KAFKA_PORT', '29092')
-    BOOTSTRAP_SERVERS = [f'{INSIGHTS_KAFKA_HOST}:{INSIGHTS_KAFKA_PORT}']
+    BOOTSTRAP_SERVERS = os.getenv("BOOTSTRAP_SERVERS", "localhost:29092").split(",")
     KAFKA_BROKER = None
     ANNOUNCE_TOPIC = os.getenv('ANNOUNCE_TOPIC', 'platform.upload.announce')
     VALIDATION_TOPIC = os.getenv('VALIDATION_TOPIC', 'platform.upload.validation')

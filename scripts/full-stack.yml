@@ -1,8 +1,9 @@
-# docker-compose.yml
-# ==================
-# This docker-compose file will stand up the yuptoo related services without
-# yuptoo itself, including kafka, minio, ingress and inventory.
-# The yuptoo can be run manaully in local for development tests.
+# full-stack.yml
+# ==============
+# This docker-compose file will stand up the entire stack for Yuptoo to work,
+# including kafka, minio, ingress and inventory.
+# The steps for building those images are out of scope, but this will reference
+# them if they exist.
 version: "3.8"
 services:
   zookeeper:
@@ -13,16 +14,11 @@ services:
   kafka:
     image: confluentinc/cp-kafka
     ports:
-      - 9092:9092
       - 29092:29092
     depends_on:
       - zookeeper
     environment:
-      # - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092
-      - KAFKA_LISTENERS=LISTENER_BOB://kafka:29092,LISTENER_FRED://kafka:9092
-      - KAFKA_ADVERTISED_LISTENERS=LISTENER_BOB://kafka:29092,LISTENER_FRED://localhost:9092
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT
-      - KAFKA_INTER_BROKER_LISTENER_NAME=LISTENER_BOB
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092
       - KAFKA_BROKER_ID=1
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:32181
@@ -85,8 +81,9 @@ services:
       - INGRESS_REJECTBUCKET=insights-upload-rejected
       - INGRESS_INVENTORYURL=http://inventory:3000/api/inventory/v1/hosts
         # VALIDTOPICS is required. This is derived from content type. ex: vnd.redhat.qpc.thing+tgz
-      - INGRESS_VALID_UPLOAD_TYPES=qpc
       - INGRESS_VALIDTOPICS=qpc
+        # Receive all types of service uploads
+      - INGRESS_VALID_UPLOAD_TYPES=advisor,compliance,qpc,resource-optimization,malware-detection
       - OPENSHIFT_BUILD_COMMIT=somestring
       - INGRESS_MAXSIZE=104857600
       - INGRESS_MINIODEV=true
@@ -95,6 +92,18 @@ services:
       - INGRESS_MINIOENDPOINT=minio:9000
     depends_on:
        - kafka
+
+  yuptoo:
+    image: quay.io/cloudservices/yuptoo:latest
+    command: [ '/bin/sh', '-c', 'python -m main' ]
+    ports:
+      - 8000:8000 #for prometheus endpoint
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:29092
+      - LOG_LEVEL=DEBUG
+    depends_on:
+      - kafka
+      - minio
 
   insights-inventory-mq: &inventory
     image: quay.io/cloudservices/insights-inventory:latest
@@ -112,15 +121,7 @@ services:
     depends_on:
        - db-host-inventory
        - createbuckets
-
-  insights-inventory-web:
-    <<: *inventory
-    command: "make upgrade_db run_inv_web_service"
-    depends_on:
-      - insights-inventory-mq
-    ports:
-      - 8001:8080
-
+    
   db-host-inventory:
       image: postgres
       restart: always
@@ -130,38 +131,6 @@ services:
         POSTGRES_DB: insights
       ports:
         - "5432:5432"
-
-  payload-tracker-db:
-      image: postgres
-      restart: always
-      environment:
-          POSTGRES_PASSWORD: crc
-          POSTGRES_USER: crc
-          POSTGRES_DB: crc
-      ports:
-          - "5433:5432"
-
-  payload-tracker-go:
-    image: quay.io/cloudservices/payload-tracker-go:893b7b4
-    restart: always
-    command:
-      - /bin/sh
-      - -c
-      - |
-        ./pt-migration
-        ./pt-seeder
-        ./pt-consumer
-    depends_on:
-      - kafka
-      - payload-tracker-db
-    environment:
-      - DB_NAME=crc
-      - DB_USER=crc
-      - DB_PASSWORD=crc
-      - DB_HOST=payload-tracker-db
-      - DB_PORT=5432
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-      - VALIDATE_REQUEST_ID_LENGTH=30
 
 volumes:
   minio_conf:
