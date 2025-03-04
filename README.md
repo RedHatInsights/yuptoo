@@ -4,7 +4,7 @@
 
 ![UML](https://www.plantuml.com/plantuml/png/VLF1Rjim3BtxAmJlkXRhslKG344FMuvhWNM7eIaCMgOJRRBaaNIwBCY_JvGRD6cHw1BalIVoyL6-OG6IeVE5EF5eVlwukx-zDNSKBJAxi30p7vyA38bUczw3j96wyw7t4Pfp224EmU8nVWNUDI0kXg874cTT3q7CUkWbnZUNN5WbADBwV1bPKcz2veEBozeLnpoSJSUo4zFnelWM1GsvnL9CR8_wdfXDIVXdG9RADUN4b53RvkBZvLNvVXvAi3R9HF4FUYuosfCBwiShhjfFrnbdzmyLqj_AXQfU2_B88AsSpMI3EbcEnEnWbLWGNAJHLTCwZsO7P7QWtAmUx6-KIlyfMbzV9TTZYfa6nZseOg4KOfPsAD20G99jjlEmBSQiNZBx4f-2HiC6o2xT2arBiPk7xvTcxFhcnjU_Gc253M4VIGnxPv7pjLsD0dp21sjrZoQTrpNk2GBhOenk_51p-bdaBMVzuQPtbJVbyxWFcx9Lctdol8mr2tPLJr5ppl3sKObTmselhCynLNO1V9NQLRyuXkcsGCyf7d1-8Dop_F1EtyXizgZUZtq7htnxRFTjdtwEBrMKUZPG9Z-XAKwdTJPTrcviVPFKG-V_0m00 "Yuptoo Processing Flow")
 
-See more details in this [Yuptoo Documentation](https://inscope.corp.redhat.com/docs/default/Component/yuptoo/).
+See  more details in this [Yuptoo Documentation](https://inscope.corp.redhat.com/docs/default/Component/yuptoo/).
 
 ## What is different in yuptoo compared to legacy yupana
 - No database.
