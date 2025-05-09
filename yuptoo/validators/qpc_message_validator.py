@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from urllib.parse import parse_qs, urlparse
 
 from yuptoo.lib.config import ANNOUNCE_TOPIC
+from yuptoo.lib.config import BYPASS_PAYLOAD_EXPIRATION
 from yuptoo.lib.exceptions import QPCKafkaMsgException
 
 LOG = logging.getLogger(__name__)
@@ -26,7 +27,8 @@ def validate_qpc_message(upload_message):
         if missing_fields:
             raise QPCKafkaMsgException(f"Message missing required field(s): {', '.join(missing_fields)}.")
 
-        check_if_url_expired(url, request_id)
+        if not BYPASS_PAYLOAD_EXPIRATION:
+            check_if_url_expired(url, request_id)
         request_obj = {
             'request_id': request_id,
             'account': upload_message.get('account'),
