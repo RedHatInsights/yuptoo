@@ -44,3 +44,16 @@ def test_check_if_url_expired():
     request_id = '123456'
     with pytest.raises(QPCKafkaMsgException):
         check_if_url_expired(url, request_id)
+
+
+def test_check_if_url_expired_bypass():
+    """Test expired url(bad case)."""
+    url = 'http://minio:9000/insights-upload-perma'\
+          '?X-Amz-Date=20200928T063623Z&X-Amz-Expires=86400'
+    request_id = '123456'
+    qpc_msg = {'url': url, 'request_id': request_id,
+               'b64_identity': b64_identity}
+    with patch('yuptoo.validators.qpc_message_validator.LOG.error') as mock:
+        with patch('yuptoo.validators.qpc_message_validator.BYPASS_PAYLOAD_EXPIRATION', True):
+            validate_qpc_message(qpc_msg)
+    mock.assert_called_once_with(f"Message not found on topic: {ANNOUNCE_TOPIC}")
