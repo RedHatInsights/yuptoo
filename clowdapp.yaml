@@ -52,8 +52,7 @@ parameters:
 - description: Image NAME
   name: IMAGE
   required: true
-  value: quay.io/cloudservices/yuptoo
-  # value: quay.io/redhat-services-prod/insights-management-tenant/insights-yuptoo/yuptoo
+  value: quay.io/redhat-services-prod/insights-management-tenant/insights-yuptoo/yuptoo
 - description: Image tag
   name: IMAGE_TAG
   required: true
