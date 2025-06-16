@@ -1,4 +1,5 @@
 import json
+import signal
 
 from yuptoo.lib.config import KAFKA_AUTO_COMMIT, ANNOUNCE_TOPIC, METRICS_PORT, KAFKA_BROKER, TRACKER_TOPIC
 from yuptoo.lib.logger import initialize_logging, threadctx
@@ -28,6 +29,20 @@ def set_extra_log_data(request_obj):
     threadctx.org_id = request_obj['org_id']
 
 
+# Global flag for Yuptoo running, lisening on signals
+is_running = True
+
+
+def handle_signal(signal, frame):
+    global is_running
+    LOG.info("Gracefully Shutting Down. Received: %s", signal)
+    is_running = False
+
+
+signal.signal(signal.SIGTERM, handle_signal)
+signal.signal(signal.SIGINT, handle_signal)
+
+
 consumer = consume.init_consumer()
 producer = produce.init_producer()
 
@@ -35,7 +50,7 @@ LOG.info(f"Started listening on kafka topic - {ANNOUNCE_TOPIC}.")
 start_http_server(METRICS_PORT)
 LOG.info("Started Yuptoo Prometheus Server.")
 
-while True:
+while is_running:
     msg = consumer.poll(1.0)
     if msg is None:
         continue
@@ -73,3 +88,6 @@ while True:
         if not KAFKA_AUTO_COMMIT:
             consumer.commit()
         producer.flush()
+
+consumer.close()
+producer.flush()
