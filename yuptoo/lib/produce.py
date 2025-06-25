@@ -24,7 +24,7 @@ def init_producer():
 def send_message(kafka_topic, msg, request_obj=None):
 
     def delivery_report(err, msg=None, is_msg_for_hbi=False):
-        nonlocal request_obj
+        nonlocal request_obj  # noqa: F824
         if err is not None:
             LOG.error(f"Message delivery for topic {msg.topic()} failed: {err}")
             if is_msg_for_hbi:
