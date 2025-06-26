@@ -1,0 +1,140 @@
+# full-stack-mac.yml
+# ==============
+# This docker-compose file will stand up the entire stack for Yuptoo to work,
+# including kafka, minio, ingress and inventory.
+# The steps for building those images are out of scope, but this will reference
+# them if they exist.
+version: "3.8"
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=32181
+      - ZOOKEEPER_SERVER_ID=1
+  kafka:
+    image: confluentinc/cp-kafka
+    ports:
+      - 29092:29092
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092
+      - KAFKA_BROKER_ID=1
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:32181
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+
+  init-kafka:
+    image: confluentinc/cp-kafka
+    depends_on:
+      - kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server kafka:29092 --list
+
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic platform.upload.announce --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic platform.inventory.host-ingress --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic platform.payload-status --replication-factor 1 --partitions 1
+
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka:29092 --list
+      "
+
+  minio:
+    image: minio/minio
+    command: ["server", "--console-address", ":9001", "/data"]
+    volumes:
+      # Ensure the directories exist prior to running this file
+      - ./minio-conf/:/root/.minio:Z
+      - ./minio-data/:/data:Z
+    ports:
+      - 9000:9000
+    environment:
+      - MINIO_ROOT_USER=$MINIO_ACCESS_KEY
+      - MINIO_ROOT_PASSWORD=$MINIO_SECRET_KEY
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until (mc alias set myminio http://minio:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY) do echo '...waiting...' && sleep 1; done;
+      mc mb --ignore-existing myminio/insights-upload-perma;
+      mc mb --ignore-existing myminio/insights-upload-rejected;
+      mc mb --ignore-existing myminio/insights-upload-puptoo;
+      mc anonymous set public myminio/insights-upload-perma;
+      mc anonymous set public myminio/insights-upload-rejected;
+      mc anonymous set public myminio/insights-upload-puptoo;
+      exit 0;
+      "
+
+  ingress:
+    image: quay.io/cloudservices/insights-ingress:latest
+    ports:
+      - 3000:3000
+    environment:
+      - AWS_ACCESS_KEY_ID=$MINIO_ACCESS_KEY
+      - AWS_SECRET_ACCESS_KEY=$MINIO_SECRET_KEY
+      - AWS_REGION=us-east-1
+      - INGRESS_STAGEBUCKET=insights-upload-perma
+      - INGRESS_REJECTBUCKET=insights-upload-rejected
+      - INGRESS_INVENTORYURL=http://inventory:3000/api/inventory/v1/hosts
+        # VALIDTOPICS is required. This is derived from content type. ex: vnd.redhat.qpc.thing+tgz
+      - INGRESS_VALIDTOPICS=qpc
+        # Receive all types of service uploads
+      - INGRESS_VALID_UPLOAD_TYPES=advisor,compliance,qpc,resource-optimization,malware-detection
+      - OPENSHIFT_BUILD_COMMIT=somestring
+      - INGRESS_MAXSIZE=104857600
+      - INGRESS_MINIODEV=true
+      - INGRESS_MINIOACCESSKEY=$MINIO_ACCESS_KEY
+      - INGRESS_MINIOSECRETKEY=$MINIO_SECRET_KEY
+      - INGRESS_MINIOENDPOINT=minio:9000
+    depends_on:
+       - kafka
+
+  yuptoo:
+    image: quay.io/cloudservices/yuptoo:latest
+    command: [ 'python', '-m', 'main' ]
+    ports:
+      - 8000:8000 #for prometheus endpoint
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:29092
+      - LOG_LEVEL=DEBUG
+    depends_on:
+      - kafka
+      - minio
+
+  insights-inventory-mq: &inventory
+    image: quay.io/cloudservices/insights-inventory:latest
+    restart: always
+    command: "make upgrade_db run_inv_mq_service"
+    environment:
+      - APP_NAME=inventory
+      - PATH_PREFIX=api
+      - INVENTORY_DB_USER=insights
+      - INVENTORY_DB_PASS=insights
+      - INVENTORY_DB_HOST=db-host-inventory
+      - INVENTORY_DB_NAME=insights
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - PAYLOAD_TRACKER_ENABLED=false
+    depends_on:
+       - db-host-inventory
+       - createbuckets
+    
+  db-host-inventory:
+      image: postgres
+      restart: always
+      environment:
+        POSTGRES_PASSWORD: insights
+        POSTGRES_USER: insights
+        POSTGRES_DB: insights
+      ports:
+        - "5432:5432"
+
+volumes:
+  minio_conf:
+  minio_data:
+
