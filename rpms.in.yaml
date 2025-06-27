@@ -1,0 +1,4 @@
+packages: [gcc, librdkafka, python3.11, python3.11-devel, python3.11-pip, which]
+contentOrigin:
+  repofiles: ["./ubi.repo"]
+arches: [x86_64]
