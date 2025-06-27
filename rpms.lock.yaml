@@ -53,6 +53,13 @@ arches:
     name: libnsl2
     evr: 2.0.0-1.el9
     sourcerpm: libnsl2-2.0.0-1.el9.src.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/l/librdkafka-1.6.1-102.el9.x86_64.rpm
+    repoid: ubi-9-for-x86_64-appstream-rpms
+    size: 682402
+    checksum: sha256:7912308cf2123caf8571486eebca558b354dcc049d97d9918002e0a3ad433928
+    name: librdkafka
+    evr: 1.6.1-102.el9
+    sourcerpm: librdkafka-1.6.1-102.el9.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/l/libxcrypt-compat-4.4.18-3.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-appstream-rpms
     size: 93189
@@ -388,6 +395,12 @@ arches:
     checksum: sha256:28fda2510dfa3d80c6f227354c3e917a104374e97566419e71ef5e246887c4e2
     name: libnsl2
     evr: 2.0.0-1.el9
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/source/SRPMS/Packages/l/librdkafka-1.6.1-102.el9.src.rpm
+    repoid: ubi-9-for-x86_64-appstream-source-rpms
+    size: 2934764
+    checksum: sha256:2a8712c61898debec5277834b99fc7b09c89b61cffb0e60543567bd55406f673
+    name: librdkafka
+    evr: 1.6.1-102.el9
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/source/SRPMS/Packages/m/mpdecimal-2.5.1-3.el9.src.rpm
     repoid: ubi-9-for-x86_64-appstream-source-rpms
     size: 3334137
