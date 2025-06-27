@@ -81,6 +81,13 @@ arches:
     name: python3.11
     evr: 3.11.11-2.el9
     sourcerpm: python3.11-3.11.11-2.el9.src.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/p/python3.11-devel-3.11.11-2.el9.x86_64.rpm
+    repoid: ubi-9-for-x86_64-appstream-rpms
+    size: 287298
+    checksum: sha256:67ed9001b22ab453be687272ddd77f82991d8cf400ce8964b1e2971374b05630
+    name: python3.11-devel
+    evr: 3.11.11-2.el9
+    sourcerpm: python3.11-3.11.11-2.el9.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/p/python3.11-libs-3.11.11-2.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-appstream-rpms
     size: 10701215

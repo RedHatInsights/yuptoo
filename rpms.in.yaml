@@ -1,4 +1,4 @@
-packages: [gcc, python3.11, python3.11-pip, which]
+packages: [gcc, python3.11, python3.11-devel, python3.11-pip, which]
 contentOrigin:
   repofiles: ["./ubi.repo"]
 arches: [x86_64]
