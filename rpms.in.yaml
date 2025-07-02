@@ -1,0 +1,4 @@
+packages: [gcc, gcc-c++, libzstd-devel, make, openssl-devel, python3.11, python3.11-devel, python3.11-pip, which, zip, zlib-devel]
+contentOrigin:
+  repofiles: ["./ubi.repo"]
+arches: [x86_64]
