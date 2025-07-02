@@ -52,7 +52,6 @@ cd scripts && source .env && sudo docker-compose -f full-stack.yml up
 ```sh
 cd scripts && source .env && sudo docker-compose -f full-stack-mac.yml up
 ```
-⚠️ Make sure Docker Desktop is running on macOS before executing.
 
 ### Stand Up Yuptoo Manually outside the docker-compose
 
