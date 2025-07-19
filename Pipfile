@@ -6,7 +6,7 @@ verify_ssl = true
 [packages]
 app-common-python = "*"
 confluent-kafka = "*"
-insights-core = "==3.5.4"
+insights-core = "==3.6.2"
 logstash-formatter = "*"
 prometheus-client = "*"
 requests = "*"
