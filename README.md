@@ -36,6 +36,32 @@ For linting run the below command.
 pipenv run flake8
 ```
 
+## Konflux Hermetic Build
+
+Konflux Hermetic Build had been enabled for Yuptoo repo.
+
+A hermetic build is a secure, self-contained build process that doesn’t depend on anything outside of the build environment.
+Konflux can prefetch dependencies for your hermetic builds using Cachi2 by generating a software bill of materials (SBOM) where all dependencies are properly declared and pinned to specific versions.
+
+For any dependencies update introduced in [Pipfile](Pipfile) and [Pipfile.lock](Pipfile.lock), please update the following required files referring to this [Hermetic Build Process](.hermetic_builds/README.md):
+
+  - Enabling prefetch builds for rpm
+    - [rpms.in.yaml](rpms.in.yaml)
+    - [rpms.lock.yaml](rpms.lock.yaml)
+
+  - Enabling prefetch builds for pip
+    - [requirements.txt](requirements.txt)
+    - [requirements-build.in](requirements-build.in)
+    - [requirements-build.txt](requirements-build.txt)
+    - [requirements-extras.txt](requirements-extras.txt)
+
+  - Enabling prefetch builds for generic fetcher
+    - [artifacts.lock.yaml](artifacts.lock.yaml)
+
+More Konflux Hermetic Build resources:
+  - https://konflux-ci.dev/docs/building/hermetic-builds/
+  - https://konflux-ci.dev/docs/building/prefetching-dependencies/
+
 ## Running with Docker Compose
 
 Two docker-compose files are made available in this repo for standing up a local dev environment. The `full-stack.yml` file stands up ingress, kafka, yuptoo, minio, and inventory components so that the entire first bits of the platform pipeline can be tested. The `docker-compose.yml` file stands up services without yuptoo, the yuptoo can be run manaully in local for development tests.
