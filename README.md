@@ -26,7 +26,8 @@ Read more about modifiers - [yuptoo/modifiers](https://github.com/RedHatInsights
 
 ## Testing and Linting
 
-To run pytest hit the below command in yuptoo root directory
+To run pytest hit the below command 
+in yuptoo root directory
 ```
 pipenv run python -m pytest
 ```
