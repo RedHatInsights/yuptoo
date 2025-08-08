@@ -1,4 +1,5 @@
-FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.6-1752587672
+
 
 # Install dependencies, including runtime libraries
 RUN microdnf install --setopt=tsflags=nodocs -y python3.11 python3.11-pip python3.11-devel which gcc gcc-c++ make zlib zlib-devel openssl-libs openssl-devel libzstd libzstd-devel zip && \
