@@ -177,7 +177,7 @@ types-psutil==7.0.0.20250601 \
     --hash=sha256:0c372e2d1b6529938a080a6ba4a9358e3dfc8526d82fabf40c1ef9325e4ca52e \
     --hash=sha256:71fe9c4477a7e3d4f1233862f0877af87bff057ff398f04f4e5c0ca60aded197
     # via mypy
-types-setuptools==80.9.0.20250529 \
+types-setuptools==80.9.0.20250809 \
     --hash=sha256:00dfcedd73e333a430e10db096e4d46af93faf9314f832f13b6bbe3d6757e95f \
     --hash=sha256:79e088ba0cba2186c8d6499cbd3e143abb142d28a44b042c28d3148b1e353c91
     # via mypy
