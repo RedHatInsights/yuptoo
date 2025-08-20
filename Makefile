@@ -115,7 +115,7 @@ generate-rpms-in-yaml:
 .PHONY: generate-rpm-lockfile
 generate-rpm-lockfile: rpms.in.yaml
 	@curl -s https://raw.githubusercontent.com/konflux-ci/rpm-lockfile-prototype/refs/heads/main/Containerfile | \
-	podman build --arch $(IMAGE_ARCH) -t localhost/rpm-lockfile-prototype -f /tmp/Containerfile
+	podman build --arch $(IMAGE_ARCH) -t localhost/rpm-lockfile-prototype -
 	@container_dir=/work; \
 	podman run --arch $(IMAGE_ARCH) --rm -v $${PWD}:$${container_dir} localhost/rpm-lockfile-prototype:latest --outfile=$${container_dir}/rpms.lock.yaml --image $(BASE_IMAGE) $${container_dir}/rpms.in.yaml
 	@if [ ! -f rpms.lock.yaml ]; then \
