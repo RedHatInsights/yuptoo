@@ -2,6 +2,6 @@
 metadata:
   version: "1.0"
 artifacts:
-  - download_url: "https://github.com/confluentinc/librdkafka/archive/refs/tags/v2.11.0.zip"
-    checksum: "sha256:9e76a408f0ed346f21be5e2df58b672d07ff9c561a5027f16780d1b26ef24683"
-    filename: "v2.11.0.zip"
+  - download_url: "https://github.com/confluentinc/librdkafka/archive/refs/tags/v2.11.1.zip"
+    checksum: "sha256:4a63e4422e5f5bbbb47f0ac1200e2ebd1f91b7b23f0de1bc625810c943fb870e"
+    filename: "v2.11.1.zip"
