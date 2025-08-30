@@ -1,7 +1,7 @@
 -i https://pypi.org/simple
 app-common-python==0.2.8
 boto3==1.40.12; python_version >= '3.9'
-botocore==1.40.12; python_version >= '3.9'
+botocore==1.40.21; python_version >= '3.9'
 cachecontrol[filecache,redis]==0.14.3; python_version >= '3.9'
 certifi==2025.8.3; python_version >= '3.7'
 charset-normalizer==3.4.3; python_version >= '3.7'
