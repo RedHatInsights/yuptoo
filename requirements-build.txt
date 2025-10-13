@@ -91,6 +91,7 @@ flit-core==3.12.0 \
     #   jinja2
     #   packaging
     #   pathspec
+    #   tomli
     #   typing-extensions
     #   wheel
 hatch-vcs==0.5.0 \
@@ -141,9 +142,9 @@ setuptools-scm==8.3.1 \
     # via
     #   hatch-vcs
     #   urllib3
-setuptools-scm==9.2.0 \
-    --hash=sha256:6662c9b9497b6c9bf13bead9d7a9084756f68238302c5ed089fb4dbd29d102d7 \
-    --hash=sha256:c551ef54e2270727ee17067881c9687ca2aedf179fa5b8f3fab9e8d73bdc421f
+setuptools-scm==9.2.1 \
+    --hash=sha256:2f5b21e45205e47ed3976e58bc29c38f49bb9b6f07c625c7fd2823871694b244 \
+    --hash=sha256:84c9b3f39ffb77ba00dd92a06e025e4f66dc69ab8df1c2a225a0678e76311f8d
     # via
     #   app-common-python
     #   charset-normalizer
@@ -164,7 +165,6 @@ wheel==0.45.1 \
     # via
     #   confluent-kafka
     #   python-dateutil
-    #   pyyaml
 
 # The following packages are considered to be unsafe in a requirements file:
 setuptools==80.9.0 \
