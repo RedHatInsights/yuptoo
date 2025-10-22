@@ -1,10 +1,13 @@
 {
     "extends": [
-        "github>konflux-ci/mintmaker//config/renovate/renovate.json"
+        "github>RedHatInsights/konflux-pipelines//renovate/foreman_satellite/renovate.json"
     ],
     "schedule": [
         "on Monday after 3am and before 10am"
     ],
+    "tekton": {
+        "schedule": ["at any time"]
+    },
     "baseBranchPatterns": [
         "main"
     ],
