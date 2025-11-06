@@ -641,8 +641,6 @@ data:
                 "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
-                "axisSoftMin": 0,
-                "axisWidth": "auto",
                 "barAlignment": 0,
                 "barWidthFactor": 0.6,
                 "drawStyle": "line",
@@ -793,7 +791,7 @@ data:
       "timezone": "",
       "title": "Yuptoo",
       "uid": "pGzJEgoGf",
-      "version": 2
+      "version": 4
     }
 kind: ConfigMap
 metadata:
