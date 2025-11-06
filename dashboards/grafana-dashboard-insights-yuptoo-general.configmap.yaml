@@ -27,9 +27,77 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 1203723,
+      "id": 1025881,
       "links": [],
       "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "description": "Yuptoo pod up avg_over_time",
+          "fieldConfig": {
+            "defaults": {
+              "decimals": 2,
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 0,
+            "y": 0
+          },
+          "id": 32,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "mean"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "11.6.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "editorMode": "code",
+              "expr": "avg(avg_over_time(up{service=\"yuptoo-service\"}[$__range]))",
+              "interval": "",
+              "legendFormat": "",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Uptime",
+          "type": "gauge"
+        },
         {
           "datasource": {
             "type": "prometheus",
@@ -57,8 +125,8 @@ data:
           },
           "gridPos": {
             "h": 3,
-            "w": 7,
-            "x": 0,
+            "w": 6,
+            "x": 8,
             "y": 0
           },
           "id": 23,
@@ -123,8 +191,8 @@ data:
           },
           "gridPos": {
             "h": 3,
-            "w": 7,
-            "x": 7,
+            "w": 5,
+            "x": 14,
             "y": 0
           },
           "id": 26,
@@ -189,8 +257,8 @@ data:
           },
           "gridPos": {
             "h": 3,
-            "w": 7,
-            "x": 14,
+            "w": 5,
+            "x": 19,
             "y": 0
           },
           "id": 29,
@@ -255,8 +323,8 @@ data:
           },
           "gridPos": {
             "h": 3,
-            "w": 7,
-            "x": 0,
+            "w": 6,
+            "x": 8,
             "y": 3
           },
           "id": 24,
@@ -321,8 +389,8 @@ data:
           },
           "gridPos": {
             "h": 3,
-            "w": 7,
-            "x": 7,
+            "w": 5,
+            "x": 14,
             "y": 3
           },
           "id": 27,
@@ -387,8 +455,8 @@ data:
           },
           "gridPos": {
             "h": 3,
-            "w": 7,
-            "x": 14,
+            "w": 5,
+            "x": 19,
             "y": 3
           },
           "id": 25,
@@ -452,8 +520,8 @@ data:
           },
           "gridPos": {
             "h": 3,
-            "w": 7,
-            "x": 0,
+            "w": 6,
+            "x": 8,
             "y": 6
           },
           "id": 22,
@@ -517,8 +585,8 @@ data:
           },
           "gridPos": {
             "h": 3,
-            "w": 7,
-            "x": 7,
+            "w": 5,
+            "x": 14,
             "y": 6
           },
           "id": 28,
@@ -623,8 +691,8 @@ data:
             "overrides": []
           },
           "gridPos": {
-            "h": 9,
-            "w": 21,
+            "h": 10,
+            "w": 24,
             "x": 0,
             "y": 9
           },
@@ -725,7 +793,7 @@ data:
       "timezone": "",
       "title": "Yuptoo",
       "uid": "pGzJEgoGf",
-      "version": 1
+      "version": 2
     }
 kind: ConfigMap
 metadata:
