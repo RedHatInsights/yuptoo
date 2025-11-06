@@ -574,7 +574,7 @@ data:
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "axisSoftMin": 0,
-                "axisWidth": 0,
+                "axisWidth": "auto",
                 "barAlignment": 0,
                 "barWidthFactor": 0.6,
                 "drawStyle": "line",
