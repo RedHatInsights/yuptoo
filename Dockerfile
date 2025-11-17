@@ -22,9 +22,9 @@ RUN curl -L https://github.com/confluentinc/librdkafka/archive/refs/tags/v2.12.0
     rm -rf /tmp/librdkafka*
 
 COPY Pipfile Pipfile.lock main.py ${APP_ROOT}/src/
-RUN python -m pip install --upgrade pip && \
+RUN python -m pip install --upgrade pip --ignore-installed && \
     python -m pip install pipenv && \
-    pipenv install --system --ignore-pipfile --ignore-installed
+    pipenv install --system --ignore-pipfile
 COPY yuptoo ${APP_ROOT}/src/yuptoo/
 
 RUN microdnf remove -y which gcc gcc-c++ make zlib-devel openssl-devel libzstd-devel zip && \
