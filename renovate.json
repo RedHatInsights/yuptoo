@@ -8,9 +8,6 @@
     "tekton": {
         "schedule": ["at any time"]
     },
-    "baseBranchPatterns": [
-        "main"
-    ],
     "ignorePaths": [
         ".pre-commit-config.yaml"
     ]
