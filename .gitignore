@@ -15,5 +15,4 @@ scripts/minio-data/
 temp/
 .idea
 .venv
-ubi.repo
 .python-version
