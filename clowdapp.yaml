@@ -82,3 +82,6 @@ parameters:
 - description: Consumer group id to be used.
   name: KAFKA_CONSUMER_GROUP_ID
   value: "qpc-group"
+- description: Kafka consumer max.poll.interval.ms
+  name: KAFKA_CONSUMER_MAXPOLL_INTERVAL
+  value: 600000
