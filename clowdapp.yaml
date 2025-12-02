@@ -84,4 +84,4 @@ parameters:
   value: "qpc-group"
 - description: Kafka consumer MAX_POLL_INTERVAL
   name: KAFKA_CONSUMER_MAXPOLL_INTERVAL
-  value: 600000
+  value: "600000"
