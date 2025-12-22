@@ -28,9 +28,9 @@ platformdirs==4.3.8 \
     --hash=sha256:3d512d96e16bcb959a814c9f348431070822a6496326a4be0911c40b5a74c2bc \
     --hash=sha256:ff7059bb7eb1179e2685604f4aaf157cfd9535242bd23742eadc3c13542139b4
     # via virtualenv
-virtualenv==20.31.2 \
-    --hash=sha256:36efd0d9650ee985f0cad72065001e66d49a6f24eb44d98980f630686243cf11 \
-    --hash=sha256:e10c0a9d02835e592521be48b332b6caee6887f332c111aa79a09b9e79efc2af
+virtualenv==20.35.4 \
+    --hash=sha256:643d3914d73d3eeb0c552cbb12d7e82adf0e504dbf86a3182f8771a153a1971c \
+    --hash=sha256:c21c9cede36c9753eeade68ba7d523529f228a403463376cf821eaae2b650f1b
     # via pipenv
 
 # The following packages are considered to be unsafe in a requirements file:
