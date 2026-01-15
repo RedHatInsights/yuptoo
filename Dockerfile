@@ -2,7 +2,7 @@ FROM registry.access.redhat.com/ubi9/ubi-minimal:9.7-1764794109
 
 
 # Install dependencies, including runtime libraries
-RUN microdnf install --setopt=tsflags=nodocs -y python3.11 python3.11-pip python3.11-devel which gcc gcc-c++ make zlib zlib-devel openssl-libs openssl-devel libzstd libzstd-devel zip && \
+RUN microdnf install --setopt=tsflags=nodocs -y python3.11 python3.11-pip python3.11-devel which gcc gcc-c++ make zlib zlib-devel openssl-libs openssl-devel cyrus-sasl cyrus-sasl-devel libzstd libzstd-devel zip && \
     microdnf upgrade -y && \
     microdnf clean all
 
@@ -27,7 +27,7 @@ RUN python -m pip install --upgrade pip && \
     pipenv install --system --ignore-pipfile
 COPY yuptoo ${APP_ROOT}/src/yuptoo/
 
-RUN microdnf remove -y which gcc gcc-c++ make zlib-devel openssl-devel libzstd-devel zip && \
+RUN microdnf remove -y which gcc gcc-c++ make zlib-devel openssl-devel cyrus-sasl cyrus-sasl-devel libzstd-devel zip && \
     microdnf clean all
 
 ENV LD_LIBRARY_PATH=/usr/lib64:/usr/lib

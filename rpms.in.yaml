@@ -1,4 +1,4 @@
-packages: [gcc, gcc-c++, libzstd, libzstd-devel, make, openssl-devel, openssl-libs, python3.11, python3.11-devel, python3.11-pip, which, zip, zlib, zlib-devel]
+packages: [cyrus-sasl, cyrus-sasl-devel, gcc, gcc-c++, libzstd, libzstd-devel, make, openssl-devel, openssl-libs, python3.11, python3.11-devel, python3.11-pip, which, zip, zlib, zlib-devel]
 contentOrigin:
   repofiles: ["./ubi.repo"]
 arches: [x86_64]

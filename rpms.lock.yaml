@@ -11,6 +11,20 @@ arches:
     name: cpp
     evr: 11.5.0-11.el9
     sourcerpm: gcc-11.5.0-11.el9.src.rpm
+  - url: https://cdn.redhat.com/content/dist/rhel9/9/x86_64/appstream/os/Packages/c/cyrus-sasl-devel-2.1.27-22.el9.x86_64.rpm
+    repoid: rhel-9-for-x86_64-appstream-rpms
+    size: 113776
+    checksum: sha256:c3cc3f5921144f322d97627b546033870a31ad68d07543820e376e323978394b
+    name: cyrus-sasl-devel
+    evr: 2.1.27-22.el9
+    sourcerpm: cyrus-sasl-2.1.27-22.el9.src.rpm
+  - url: https://cdn.redhat.com/content/dist/rhel9/9/x86_64/baseos/os/Packages/c/cyrus-sasl-2.1.27-22.el9.x86_64.rpm
+    repoid: rhel-9-for-x86_64-baseos-rpms
+    size: 72615
+    checksum: sha256:3eb2701c8a7ab975f5fd69e3ac1e59e155c97c97a6ec6e4ba96fb0fe3f430bd3
+    name: cyrus-sasl
+    evr: 2.1.27-22.el9
+    sourcerpm: cyrus-sasl-2.1.27-22.el9.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/g/gcc-11.5.0-11.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-appstream-rpms
     size: 33986019
