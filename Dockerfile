@@ -1,3 +1,10 @@
+FROM registry.access.redhat.com/ubi9/s2i-base:9.7-1767847254 AS kafka_build
+USER 0
+ADD librdkafka .
+RUN ./configure --prefix=/usr && \
+    make && \
+    make install
+
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.7-1763362218
 
 
@@ -11,19 +18,15 @@ WORKDIR $APP_ROOT/src/
 
 RUN set -ex && if [ -e `which python3.11` ]; then ln -s `which python3.11` /usr/local/bin/python; fi
 
-# Download and install librdkafka
-RUN curl -L https://github.com/confluentinc/librdkafka/archive/refs/tags/v2.12.0.zip -o /tmp/librdkafka.zip || cp /cachi2/output/deps/generic/v2.12.0.zip /tmp/librdkafka.zip && \
-    unzip /tmp/librdkafka.zip -d /tmp && \
-    cd /tmp/librdkafka-2.12.0 && \
-    ./configure --prefix=/usr && \
-    make && \
-    make install && \
-    ldconfig && \
-    rm -rf /tmp/librdkafka*
+# install librdkafka
+COPY --from=kafka_build /usr/lib/librdkafka*.so* /usr/lib/
+COPY --from=kafka_build /usr/lib/pkgconfig/rdkafka*.pc /usr/lib/pkgconfig/
+COPY --from=kafka_build /usr/include/librdkafka /usr/include/librdkafka
+RUN ldconfig
 
 COPY Pipfile Pipfile.lock main.py ${APP_ROOT}/src/
 RUN python -m pip install --upgrade pip && \
-    python -m pip install pipenv && \
+    python -m pip install pipenv --ignore-installed && \
     pipenv install --system --ignore-pipfile
 COPY yuptoo ${APP_ROOT}/src/yuptoo/
 
