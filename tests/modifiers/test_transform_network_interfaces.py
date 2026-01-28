@@ -105,6 +105,26 @@ def test_remove_trailing_slash_in_ipv4_addresses():
     assert 'ipv4_addresses' in transformed_obj['modified']
 
 
+def test_ipv4_addresses_without_slashes_remain_unchanged():
+    """Test that ipv4_addresses without slashes remain unchanged and unmodified."""
+    host = {
+        'system_profile': {
+            'network_interfaces': [
+                {'ipv4_addresses': ['192.168.10.10', '192.168.10.11'],
+                 'ipv6_addresses': [], 'name': 'eth0'}]
+        }}
+    transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
+    TransformNetworkInterfaces().run(host, transformed_obj)
+    result = {
+        'system_profile': {
+            'network_interfaces': [
+                {'ipv4_addresses': ['192.168.10.10', '192.168.10.11'],
+                 'ipv6_addresses': [],  'name': 'eth0'}]
+        }}
+    assert host == result
+    assert 'ipv4_addresses' not in transformed_obj['modified']
+
+
 def test_do_not_run_mtu_transformation_when_not_exists():
     """Test not to run mtu transformation when it doesn't exist."""
     host = {

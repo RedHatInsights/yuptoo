@@ -70,7 +70,7 @@ class TransformNetworkInterfaces(Modifier):
         return increment_counts, nic
 
     def transform_ipv4(self, nic: dict, increment_counts: dict):
-        """Remove trailing slash for 'network_interfaces[]['ipv4_addresses']."""
+        """Remove trailing slash and mask for 'network_interfaces[]['ipv4_addresses']."""
         old_ipv4 = nic.get('ipv4_addresses', [])
         new_ipv4 = []
         is_modified = False
