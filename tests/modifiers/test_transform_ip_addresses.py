@@ -37,3 +37,13 @@ def test_remove_duplicate_ip_addresses():
     TransformIPAddress().run(host, transformed_obj)
     assert host == {'ip_addresses': ['192.168.10.10']}
     assert transformed_obj['modified']
+
+
+def test_remove_empty_items_in_ip_addresses():
+    """Test remove empty items in ip_addresses."""
+    host = {
+        'ip_addresses': ['192.168.10.10', '', '192.168.10.11']}
+    transformed_obj = {'modified': []}
+    TransformIPAddress().run(host, transformed_obj)
+    assert host == {'ip_addresses': ['192.168.10.10', '192.168.10.11']}
+    assert transformed_obj['modified']
