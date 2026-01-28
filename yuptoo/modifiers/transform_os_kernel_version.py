@@ -1,4 +1,8 @@
+import re
 from yuptoo.processor.utils import Modifier
+
+# Follow the system_profile schema defination of the "os_kernel_version" field
+KERNEL_VERSION_PATTERN = re.compile(r'^(\d+\.\d+\.\d+)(\.\d+)?')
 
 
 class TransformOsKernalVersion(Modifier):
@@ -9,8 +13,9 @@ class TransformOsKernalVersion(Modifier):
 
         if isinstance(os_kernel_version, str):
             version_value = os_kernel_version.split('-')[0]
-            if version_value[-1] == '+':
-                version_value = version_value[:-1]
+            match = KERNEL_VERSION_PATTERN.match(version_value)
+            if match:
+                version_value = match.group(1) + (match.group(2) or '')
             host['system_profile']['os_kernel_version'] = version_value
             transformed_obj['modified'].append(
                 "os_kernel_version from '%s' to '%s'"
