@@ -80,6 +80,31 @@ def test_remove_empty_strings_in_ipv6_addresses():
     assert len(filtered_nics[0]['ipv6_addresses']) == 1
 
 
+def test_remove_trailing_slash_in_ipv4_addresses():
+    """Test to remove trailing slash in ipv4 addresses."""
+    host = {
+        'system_profile': {
+            'network_interfaces': [
+                {'ipv4_addresses': ['192.168.10.10/24', '192.168.10.11/', '', '192.168.10.12'],
+                 'ipv6_addresses': [], 'name': 'eth0'}]
+        }}
+    transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
+    TransformNetworkInterfaces().run(host, transformed_obj)
+    result = {
+        'system_profile': {
+            'network_interfaces': [
+                {'ipv4_addresses': ['192.168.10.10', '192.168.10.11', '192.168.10.12'],
+                 'ipv6_addresses': [],  'name': 'eth0'}]
+        }}
+    assert host == result
+    nics = host['system_profile']['network_interfaces']
+    assert len(nics) == 1
+    filtered_nics = [nic for nic in nics if nic.get('name') == 'eth0']
+    assert len(filtered_nics)
+    assert len(filtered_nics[0]['ipv4_addresses']) == 3
+    assert 'ipv4_addresses' in transformed_obj['modified']
+
+
 def test_do_not_run_mtu_transformation_when_not_exists():
     """Test not to run mtu transformation when it doesn't exist."""
     host = {

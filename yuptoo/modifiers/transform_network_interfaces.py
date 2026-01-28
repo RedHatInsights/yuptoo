@@ -26,13 +26,16 @@ class TransformNetworkInterfaces(Modifier):
 
             increment_counts = {
                 'mtu': 0,
-                'ipv6_addresses': 0
+                'ipv6_addresses': 0,
+                'ipv4_addresses': 0
             }
             filtered_nics = list({nic['name']: nic for nic in filtered_nics}.values())
             for nic in filtered_nics:
                 increment_counts, nic = self.transform_mtu(
                     nic, increment_counts)
                 increment_counts, nic = self.transform_ipv6(
+                    nic, increment_counts)
+                increment_counts, nic = self.transform_ipv4(
                     nic, increment_counts)
 
             modified_fields = [
@@ -63,5 +66,26 @@ class TransformNetworkInterfaces(Modifier):
         new_len = len(nic['ipv6_addresses'])
         if old_len != new_len:
             increment_counts['ipv6_addresses'] += 1
+
+        return increment_counts, nic
+
+    def transform_ipv4(self, nic: dict, increment_counts: dict):
+        """Remove trailing slash for 'network_interfaces[]['ipv4_addresses']."""
+        old_ipv4 = nic.get('ipv4_addresses', [])
+        new_ipv4 = []
+        is_modified = False
+        for old_ip in old_ipv4:
+            if old_ip:
+                if '/' in old_ip:
+                    is_modified = True
+                    new_ip = old_ip.split('/', 1)[0]
+                    if new_ip:
+                        new_ipv4.append(new_ip)
+                else:
+                    new_ipv4.append(old_ip)
+
+        if is_modified:
+            nic['ipv4_addresses'] = new_ipv4
+            increment_counts['ipv4_addresses'] += 1
 
         return increment_counts, nic
