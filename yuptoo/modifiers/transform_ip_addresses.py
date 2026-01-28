@@ -15,12 +15,12 @@ class TransformIPAddress(Modifier):
             # Drop blank, duplicate items & keep the order of the ip_addresses
             valid_ip_addresses = []
             is_modified = False
-            _known_ip_addresses_set = set()
+            seen = set()
             for _ip_addr in ip_addresses:
                 ip_addr = _ip_addr.strip()
-                if ip_addr and ip_addr not in _known_ip_addresses_set:
+                if ip_addr and ip_addr not in seen:
                     valid_ip_addresses.append(ip_addr)
-                    _known_ip_addresses_set.add(ip_addr)
+                    seen.add(ip_addr)
                 else:
                     is_modified = True
 
@@ -33,10 +33,6 @@ class TransformIPAddress(Modifier):
                 host['ip_addresses'] = valid_ip_addresses
                 transformed_obj['modified'].append(
                     'transformed ip_addresses to store unique values')
-                return
-
-            else:
-                # no modification needed
                 return
 
         except KeyError:
