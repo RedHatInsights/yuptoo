@@ -105,6 +105,56 @@ def test_remove_trailing_slash_in_ipv4_addresses():
     assert 'ipv4_addresses' in transformed_obj['modified']
 
 
+def test_remove_empty_strings_in_ipv4_addresses():
+    """Test to remove empty strings in ipv4 addresses."""
+    host = {
+        'system_profile': {
+            'network_interfaces': [
+                {'ipv4_addresses': ['192.168.10.10', '', '192.168.10.11'],
+                 'ipv6_addresses': [], 'name': 'eth0'}]
+        }}
+    transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
+    TransformNetworkInterfaces().run(host, transformed_obj)
+    result = {
+        'system_profile': {
+            'network_interfaces': [
+                {'ipv4_addresses': ['192.168.10.10', '192.168.10.11'],
+                 'ipv6_addresses': [],  'name': 'eth0'}]
+        }}
+    assert host == result
+    nics = host['system_profile']['network_interfaces']
+    assert len(nics) == 1
+    filtered_nics = [nic for nic in nics if nic.get('name') == 'eth0']
+    assert len(filtered_nics)
+    assert len(filtered_nics[0]['ipv4_addresses']) == 2
+    assert 'ipv4_addresses' in transformed_obj['modified']
+
+
+def test_remove_trailing_slash_edge_casesin_ipv4_addresses():
+    """Test to remove trailing slash edge cases in ipv4 addresses."""
+    host = {
+        'system_profile': {
+            'network_interfaces': [
+                {'ipv4_addresses': ['/24', '/', '', '/2'],
+                 'ipv6_addresses': [], 'name': 'eth0'}]
+        }}
+    transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
+    TransformNetworkInterfaces().run(host, transformed_obj)
+    result = {
+        'system_profile': {
+            'network_interfaces': [
+                {'ipv4_addresses': [],
+                 'ipv6_addresses': [],  'name': 'eth0'}]
+        }}
+    assert host == result
+    nics = host['system_profile']['network_interfaces']
+    assert len(nics) == 1
+    filtered_nics = [nic for nic in nics if nic.get('name') == 'eth0']
+    assert len(filtered_nics)
+    assert len(filtered_nics[0]['ipv4_addresses']) == 0
+    assert 'ipv4_addresses' in transformed_obj['modified']
+
+
 def test_ipv4_addresses_without_slashes_remain_unchanged():
     """Test that ipv4_addresses without slashes remain unchanged and unmodified."""
     host = {
@@ -206,3 +256,34 @@ def test_remove_empty_mac_addresses_while_omitting_nics():
     TransformNetworkInterfaces().run(host, transformed_obj)
     result = {'system_profile': {'network_interfaces': []}}
     assert host == result
+
+
+def test_no_or_empty_network_interfaces_edge_case():
+    """Test no or empty network interfaces edge case, for test coverage."""
+    host = {
+        'system_profile': {
+            'some_other_field': ['test'],
+        }}
+    transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
+    TransformNetworkInterfaces().run(host, transformed_obj)
+    result = {
+        'system_profile': {
+            'some_other_field': ['test'],
+        }}
+    assert host == result
+    assert len(transformed_obj['modified']) == 0
+
+    host = {
+        'system_profile': {
+            'network_interfaces': [],
+            'some_other_field': ['test'],
+        }}
+    transformed_obj = {'removed': [], 'modified': [], 'missing_data': []}
+    TransformNetworkInterfaces().run(host, transformed_obj)
+    result = {
+        'system_profile': {
+            'network_interfaces': [],
+            'some_other_field': ['test'],
+        }}
+    assert host == result
+    assert len(transformed_obj['modified']) == 0
