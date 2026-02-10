@@ -1,0 +1,62 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  annotations:
+    build.appstudio.openshift.io/repo: https://github.com/RedHatInsights/yuptoo?rev={{revision}}
+    build.appstudio.redhat.com/commit_sha: '{{revision}}'
+    build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
+    build.appstudio.redhat.com/target_branch: '{{target_branch}}'
+    pipelinesascode.tekton.dev/cancel-in-progress: "true"
+    pipelinesascode.tekton.dev/max-keep-runs: "3"
+    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch
+      == "foreman-3.18"
+    pipelinesascode.tekton.dev/pipeline: https://github.com/RedHatInsights/konflux-pipelines/raw/v1.60.0/pipelines/docker-build-oci-ta.yaml
+  creationTimestamp: null
+  labels:
+    appstudio.openshift.io/application: iop-yuptoo-sat-6-19
+    appstudio.openshift.io/component: iop-yuptoo-sat-6-19
+    pipelines.appstudio.openshift.io/type: build
+  name: iop-yuptoo-sat-6-19-on-pull-request
+  namespace: insights-management-tenant
+spec:
+  params:
+  - name: git-url
+    value: '{{source_url}}'
+  - name: revision
+    value: '{{revision}}'
+  - name: output-image
+    value: quay.io/redhat-user-workloads/insights-management-tenant/satellite-iop/iop-yuptoo-sat-6-19:on-pr-{{revision}}
+  - name: image-expires-after
+    value: 5d
+  - name: dockerfile
+    value: Dockerfile
+  - name: path-context
+    value: .
+  - name: build-source-image
+    value: "true"
+  - name: hermetic
+    value: "true"
+  - name: prefetch-input
+    value: '[{"type": "pip", "path": ".", "requirements_files": ["requirements.txt", "requirements-build.txt", "requirements-extras.txt"]}, {"type": "rpm", "path": "."}]'
+  - name: prefetch-dev-package-managers
+    value: "true"
+  - name: labels
+    value:
+      - 'url="https://www.redhat.com"'
+      - 'name=satellite/iop-yuptoo-rhel9'
+      - 'description="This adds the satellite/iop-yuptoo-rhel9 image to the Red Hat container registry. To pull this container image, run the following command: podman pull registry.redhat.io/satellite/iop-yuptoo-rhel9"'
+      - 'summary="A new satellite/iop-yuptoo-rhel9 container image is now generally available in the Red Hat container registry."'
+      - 'cpe=cpe:/a:redhat:satellite:6.19::el9'
+      - 'com.redhat.component="iop-yuptoo"'
+      - 'io.k8s.display-name="IoP Yuptoo"'
+      - 'io.k8s.description="This adds the satellite/iop-yuptoo-rhel9 image to the Red Hat container registry. To pull this container image, run the following command: podman pull registry.redhat.io/satellite/iop-yuptoo-rhel9"'
+      - 'io.openshift.tags="insights satellite iop yuptoo"'
+  pipelineRef:
+    name: docker-build-oci-ta
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-iop-yuptoo-sat-6-19
+  workspaces:
+  - name: git-auth
+    secret:
+      secretName: '{{ git_auth_secret }}'
+status: {}
