@@ -206,3 +206,17 @@ generate-requirements-build-txt:
 		echo "Error: requirements-build.txt was not generated"; \
 		exit 1; \
 	fi
+
+# Build development container and run interactively
+# Usage: make build-dev
+.PHONY: build-dev
+build-dev:
+	podman build -t yuptoo-dev -f Dockerfile.dev .
+	podman run -it --rm -v $$(pwd):/app-root/yuptoo yuptoo-dev bash
+
+# Generate Pipefile.lock and requirements.txt files in container
+# Usage: make generate-py-pkg-lock
+.PHONY: generate-py-pkg-lock
+generate-py-pkg-lock:
+	podman build -t yuptoo-dev -f Dockerfile.dev .
+	podman run -it --rm -v $$(pwd):/app-root/yuptoo yuptoo-dev bash /app-root/yuptoo/py-pkg-deps-in-container.sh
