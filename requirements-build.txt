@@ -53,7 +53,6 @@ flit-core==3.12.0 \
     --hash=sha256:18f63100d6f94385c6ed57a72073443e1a71a4acb4339491615d0f16d6ff01b2 \
     --hash=sha256:e7a0304069ea895172e3c7bb703292e992c5d1555dd1233ab7b5621b5b69e62c
     # via
-    #   cachecontrol
     #   idna
     #   jinja2
     #   packaging
@@ -68,15 +67,31 @@ hatch-vcs==0.5.0 \
     #   filelock
     #   urllib3
     #   watchtower
-hatchling==1.28.0 \
-    --hash=sha256:4d50b02aece6892b8cd0b3ce6c82cb218594d3ec5836dbde75bf41a21ab004c8 \
-    --hash=sha256:dc48722b68b3f4bbfa3ff618ca07cdea6750e7d03481289ffa8be1521d18a961
+hatchling==1.29.0 \
+    --hash=sha256:50af9343281f34785fab12da82e445ed987a6efb34fd8c2fc0f6e6630dbcc1b0 \
+    --hash=sha256:793c31816d952cee405b83488ce001c719f325d9cda69f1fc4cd750527640ea6
     # via
     #   filelock
     #   hatch-vcs
     #   redis
     #   urllib3
     #   watchtower
+maturin==1.12.6 \
+    --hash=sha256:06fc8d089f98623ce924c669b70911dfed30f9a29956c362945f727f9abc546b \
+    --hash=sha256:2cb41139295eed6411d3cdafc7430738094c2721f34b7eeb44f33cac516115dc \
+    --hash=sha256:351f3af1488a7cbdcff3b6d8482c17164273ac981378a13a4a9937a49aec7d71 \
+    --hash=sha256:3f32e0a3720b81423c9d35c14e728cb1f954678124749776dc72d533ea1115e8 \
+    --hash=sha256:6892b4176992fcc143f9d1c1c874a816e9a041248eef46433db87b0f0aff4278 \
+    --hash=sha256:6dbddfe4dc7ddee60bbac854870bd7cfec660acb54d015d24597d59a1c828f61 \
+    --hash=sha256:75133e56274d43b9227fd49dca9a86e32f1fd56a7b55544910c4ce978c2bb5aa \
+    --hash=sha256:8fdb0f63e77ee3df0f027a120e9af78dbc31edf0eb0f263d55783c250c33b728 \
+    --hash=sha256:977290159d252db946054a0555263c59b3d0c7957135c69e690f4b1558ee9983 \
+    --hash=sha256:bae91976cdc8148038e13c881e1e844e5c63e58e026e8b9945aa2d19b3b4ae89 \
+    --hash=sha256:c0c742beeeef7fb93b6a81bd53e75507887e396fd1003c45117658d063812dad \
+    --hash=sha256:d37be3a811a7f2ee28a0fa0964187efa50e90f21da0c6135c27787fa0b6a89db \
+    --hash=sha256:e90dc12bc6a38e9495692a36c9e231c4d7e0c9bfde60719468ab7d8673db3c45 \
+    --hash=sha256:fa84b7493a2e80759cacc2e668fa5b444d55b9994e90707c42904f55d6322c1e
+    # via uv-build
 packaging==26.0 ; python_version >= "3.8" \
     --hash=sha256:00243ae351a257117b6a241061796684b084ed1c516a08c48a3f7e147a9d80b4 \
     --hash=sha256:b36f1fef9334a5588b4166f8bcd26a14e521f2b55e6b9de3aaa80d3ff7a37529
@@ -96,6 +111,14 @@ pluggy==1.6.0 \
     --hash=sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3 \
     --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
     # via hatchling
+semantic-version==2.10.0 \
+    --hash=sha256:bdabb6d336998cbb378d4b9db3a4b56a1e3235701dc05ea2690d9a997ed5041c \
+    --hash=sha256:de78a3b8e0feda74cabc54aab2da702113e33ac9d9eb9d2389bcf1f58b7d9177
+    # via setuptools-rust
+setuptools-rust==1.12.0 \
+    --hash=sha256:7e7db90547f224a835b45f5ad90c983340828a345554a9a660bdb2de8605dcdd \
+    --hash=sha256:d94a93f0c97751c17014565f07bdc324bee45d396cd1bba83d8e7af92b945f0c
+    # via maturin
 setuptools-scm-git-archive==1.4.1 \
     --hash=sha256:4a0b90286f469df220769a66ed1e910a11f524c61f3caa2cd4fad95750ac3b4f \
     --hash=sha256:c418bc77b3974d3ac65f268f058f23e01dc5f991f2233128b0e16a69de227b09
@@ -112,6 +135,7 @@ setuptools-scm==9.2.2 \
     #   hatch-vcs
     #   pluggy
     #   rpm
+    #   setuptools-rust
     #   urllib3
 trove-classifiers==2026.1.14.14 \
     --hash=sha256:00492545a1402b09d4858605ba190ea33243d361e2b01c9c296ce06b5c3325f3 \
@@ -121,6 +145,27 @@ typing-extensions==4.15.0 \
     --hash=sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466 \
     --hash=sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
     # via setuptools-scm
+uv-build==0.9.30 \
+    --hash=sha256:015cab944b4c4437549c4ad11ad65c37aed6a6eb390e326d8f81945acc423533 \
+    --hash=sha256:14ac36cb0ccdc7a847e3d41903eb5d0091db4f5efcd34e693da82d6484fc5539 \
+    --hash=sha256:15dfc9657b420d5fa55d20a3a2f4b3c0cafe8cfa2a5431352e939379b763c2cd \
+    --hash=sha256:2ce9e092115baa1852ee6b8e1ec68f2e6c077d0b7bef2ba7df705ffc1d48b1a7 \
+    --hash=sha256:330cae75119cbc0de893f0a97d7f2253bdeef58f01699b186cadab61faa54a7e \
+    --hash=sha256:3cc10f63ebbf70fe2b57d7e85ce8928e36819e8c14c6c871833b4a47f3be96c5 \
+    --hash=sha256:5354af469e3cb4b0695c18d06ea7a2754e4df1a42b5a3c271674a15ca128cfb4 \
+    --hash=sha256:57bd79be3970184c24fc33d1975c557359929f5b1a166c4ad98c2320ec5c1294 \
+    --hash=sha256:7bd3d425ac8bf41917789106a6ff475821db920542d2b7188e378fc7250a31f6 \
+    --hash=sha256:80bf57943d2231c6936d82dac6f6eed9082e8cf1680a6fe045f445fef6c78077 \
+    --hash=sha256:a4659fc84ad5810a76127c22eabbd19e17b48449e784a392999a12aa052e6c17 \
+    --hash=sha256:ad64747651997af65ad19fa2822e85fff21ba8f00ad579b09f02f7efed0b0162 \
+    --hash=sha256:bcb41287fef8ce3ecacb2de76ce3e1af05f297f55413528a092e783e76ef3802 \
+    --hash=sha256:c68563778333a3b796c48815fa08a47c9acb53748d4d82b48d79d47aee62639d \
+    --hash=sha256:df913100aa522ecb636518cf83fee76ee815d66fb58092c59fbacb283fb22c1b \
+    --hash=sha256:e12115037167d8be42101af99d189624fb1e07e4efa73e9d15552be56f6d5348 \
+    --hash=sha256:f0b13d1112748dfe0ddd206af32c4ec7fe5e0b9a2224de723fea63f225cffe42 \
+    --hash=sha256:f1c7e3115c51a652bea99ade840550cf2a926ab168ef113a56a8349acaec7db4 \
+    --hash=sha256:f1e47580ebeaad740b05232f737cc9243f9580d7f307546c434d32a8c4af7bc9
+    # via cachecontrol
 wheel==0.46.3 ; python_version >= "3.9" \
     --hash=sha256:4b399d56c9d9338230118d705d9737a2a468ccca63d5e813e2a4fc7815d8bc4d \
     --hash=sha256:e3e79874b07d776c40bd6033f8ddf76a7dad46a7b8aa1b2787a83083519a1803
@@ -129,16 +174,20 @@ wheel==0.46.3 ; python_version >= "3.9" \
     #   python-dateutil
 
 # The following packages are considered to be unsafe in a requirements file:
-setuptools==80.10.2 \
-    --hash=sha256:8b0e9d10c784bf7d262c4e5ec5d4ec94127ce206e8738f29a437945fbc219b70 \
-    --hash=sha256:95b30ddfb717250edb492926c92b5221f7ef3fbcc2b07579bcd4a27da21d0173
+setuptools==82.0.0 \
+    --hash=sha256:22e0a2d69474c6ae4feb01951cb69d515ed23728cf96d05513d36e42b62b37cb \
+    --hash=sha256:70b18734b607bd1da571d097d236cfcfacaf01de45717d59e6e04b96877532e0
+    # via charset-normalizer
+setuptools==82.0.1 \
+    --hash=sha256:7d872682c5d01cfde07da7bccc7b65469d3dca203318515ada1de5eda35efbf9 \
+    --hash=sha256:a59e362652f08dcd477c78bb6e7bd9d80a7995bc73ce773050228a348ce2e5bb
     # via
     #   app-common-python
     #   calver
     #   certifi
-    #   charset-normalizer
     #   confluent-kafka
     #   markupsafe
+    #   maturin
     #   msgpack
     #   pathspec
     #   pbr
@@ -147,5 +196,6 @@ setuptools==80.10.2 \
     #   python-dateutil
     #   pyyaml
     #   rpm
+    #   setuptools-rust
     #   setuptools-scm
     #   trove-classifiers
