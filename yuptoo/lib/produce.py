@@ -46,16 +46,19 @@ def send_message(kafka_topic, msg, request_obj=None):
         else:
             producer.produce(kafka_topic, bytes, callback=delivery_report)
 
-        # Time the poll operation separately - THIS IS THE SUSPECTED BOTTLENECK
+        # Time the poll operation separately
+        # FIX: Changed from poll(1) to poll(0) due to confluent-kafka 2.13.2 regression
+        # poll(1) was taking 806ms instead of 1ms (806× slower), causing 30-min delays per slice
         poll_start = time.time()
-        producer.poll(1)
+        producer.poll(0)  # Non-blocking - prevents 806ms delay per call in confluent-kafka 2.13.2
         poll_time = time.time() - poll_start
 
         total_send_time = time.time() - send_start
 
         # Only log if operations are unexpectedly slow (reduces log noise)
+        # Note: With poll(0) fix, this should rarely trigger now
         if poll_time > 0.5:
-            LOG.warning(f"SLOW POLL: producer.poll(1) took {poll_time:.3f}s for topic {kafka_topic}")
+            LOG.warning(f"SLOW POLL: producer.poll(0) took {poll_time:.3f}s for topic {kafka_topic}")
         if total_send_time > 1.0:
             LOG.warning(f"SLOW SEND: send_message() took {total_send_time:.3f}s for topic {kafka_topic} "
                        f"(poll: {poll_time:.3f}s)")
