@@ -22,6 +22,7 @@ def init_producer():
 
 
 def send_message(kafka_topic, msg, request_obj=None):
+    import time
 
     def delivery_report(err, msg=None, is_msg_for_hbi=False):
         nonlocal request_obj  # noqa: F824
@@ -35,6 +36,7 @@ def send_message(kafka_topic, msg, request_obj=None):
                 host_uploaded.inc()
             LOG.debug(f"Message delivered to {msg.topic()} [{msg.partition()}]")
 
+    send_start = time.time()
     try:
         bytes = json.dumps(msg, ensure_ascii=False).encode("utf-8")
         if kafka_topic == UPLOAD_TOPIC:
@@ -43,6 +45,20 @@ def send_message(kafka_topic, msg, request_obj=None):
             producer.produce(kafka_topic, bytes, key, callback=partial(delivery_report, is_msg_for_hbi=True))
         else:
             producer.produce(kafka_topic, bytes, callback=delivery_report)
+
+        # Time the poll operation separately - THIS IS THE SUSPECTED BOTTLENECK
+        poll_start = time.time()
         producer.poll(1)
+        poll_time = time.time() - poll_start
+
+        total_send_time = time.time() - send_start
+
+        # Only log if operations are unexpectedly slow (reduces log noise)
+        if poll_time > 0.5:
+            LOG.warning(f"SLOW POLL: producer.poll(1) took {poll_time:.3f}s for topic {kafka_topic}")
+        if total_send_time > 1.0:
+            LOG.warning(f"SLOW SEND: send_message() took {total_send_time:.3f}s for topic {kafka_topic} "
+                       f"(poll: {poll_time:.3f}s)")
+
     except KafkaException:
         LOG.error(f"Failed to produce message to [{kafka_topic}] topic.")
