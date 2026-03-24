@@ -43,6 +43,7 @@ def send_message(kafka_topic, msg, request_obj=None):
             producer.produce(kafka_topic, bytes, key, callback=partial(delivery_report, is_msg_for_hbi=True))
         else:
             producer.produce(kafka_topic, bytes, callback=delivery_report)
-        producer.poll(1)
+        # poll(0) is non-blocking and not affected by the poll(1) performance regression in confluent-kafka 2.13.2
+        producer.poll(0)
     except KafkaException:
         LOG.error(f"Failed to produce message to [{kafka_topic}] topic.")
