@@ -41,6 +41,21 @@ ephemeral-upload-data:
 		-H "Authorization: Basic ${auth_header}" \
 		https://${server}/api/ingress/v1/upload
 
+ephemeral-upload-data-basic-auth:
+	@if [ -z "$(file)" ] || [ -z "$(env)" ] || [ -z "$(proxy)" ]; then \
+		echo "Error: Missing required parameters"; \
+		echo "Usage: make ephemeral-upload-data-basic-auth file=<path> env=<env-name> proxy=<proxy>"; \
+		exit 1; \
+	fi
+	@echo "Uploading $(file) to ephemeral environment: $(env)"
+	@echo "Proxy: ${proxy}"
+	@echo "Server: ${server}"
+	@echo "Username: ${username} (from EE)"
+	curl -vvv -x ${proxy} \
+		-F "upload=@$(file);type=application/vnd.redhat.qpc.payload+tgz" \
+		https://${server}/api/ingress/v1/upload \
+		-u ${username}:${password}
+
 sample-data:
 	mkdir -p temp/reports
 	mkdir -p temp/old_reports_temp
