@@ -5,11 +5,20 @@ verify_ssl = true
 
 [packages]
 app-common-python = "==0.2.8"
-confluent-kafka = "*"
+# confluent-kafka must match the librdkafka submodule version (v2.12.0).
+# Bumping past 2.12.x breaks the source build with a #error in confluent_kafka.h.
+# Update this pin only after also updating the librdkafka submodule.
+confluent-kafka = "==2.12.0"
 insights-core = "==3.6.7"
 logstash-formatter = "*"
 prometheus-client = "*"
 requests = "*"
+urllib3 = ">=2.6.3"
+# cachecontrol 0.14.4+ uses uv-build as its build backend; uv-build 0.9.30
+# ships a Cargo.lock that doesn't match its Cargo.toml, causing cachi2 to
+# reject the sdist during prefetch-dependencies. Pin to <0.14.4 until a
+# fixed release of uv-build (or cachecontrol) is available.
+cachecontrol = "<0.14.4"
 watchtower = "*"
 
 [requires]
