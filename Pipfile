@@ -10,7 +10,7 @@ confluent-kafka = "==2.13.2"
 insights-core = "==3.7.4"
 logstash-formatter = "*"
 prometheus-client = "*"
-requests = "*"
+requests = "==2.33.0"
 watchtower = "*"
 wheel = ">=0.46.2"
 
