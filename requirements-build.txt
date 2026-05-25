@@ -112,9 +112,9 @@ setuptools-scm==9.2.2 \
     #   pluggy
     #   rpm
     #   urllib3
-trove-classifiers==2026.1.14.14 \
-    --hash=sha256:00492545a1402b09d4858605ba190ea33243d361e2b01c9c296ce06b5c3325f3 \
-    --hash=sha256:1f9553927f18d0513d8e5ff80ab8980b8202ce37ecae0e3274ed2ef11880e74d
+trove-classifiers==2026.5.22.10 \
+    --hash=sha256:01fe864225726e03efb843827ecabfe319fc4dee8dd66d65b8996cb09be46e2c \
+    --hash=sha256:5477e9974e91904fb2cfa4a7581ab6e2f30c2c38d847fd00ed866080748101d5
     # via hatchling
 typing-extensions==4.15.0 \
     --hash=sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466 \
