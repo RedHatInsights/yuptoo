@@ -16,3 +16,5 @@ temp/
 .idea
 .venv
 .python-version
+.uv/
+.uv/

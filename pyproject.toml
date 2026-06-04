@@ -1,3 +1,38 @@
 [project]
 name = "yuptoo"
 version = "0.1.0"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "app-common-python==0.2.8",
+    "cachecontrol<0.14.4",
+    "confluent-kafka==2.13.2",
+    "insights-core==3.7.4",
+    "logstash-formatter",
+    "prometheus-client",
+    "requests==2.33.0",
+    "watchtower",
+    "wheel>=0.46.2",
+]
+
+[dependency-groups]
+dev = [
+    "flake8",
+    "pytest",
+    "pytest-cov",
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["yuptoo"]
+
+[tool.uv]
+package = true
+default-groups = "all"
+required-version = ">=0.5.0"
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"

@@ -70,8 +70,8 @@ sample-data:
 	rm -rf old_reports_temp
 
 runtest:
-	pipenv run python -m pytest --cov=yuptoo tests/
-	pipenv run flake8
+	uv run pytest --cov=yuptoo tests/
+	uv run flake8
 
 
 # Generate the ubi.repo file from the specified BASE_IMAGE
@@ -138,12 +138,14 @@ generate-rpm-lockfile: rpms.in.yaml
 		exit 1; \
 	fi
 
-# Generate requirements.txt from Poetry or Pipenv lock files
+# Generate requirements.txt from uv, Poetry or Pipenv lock files
 # Usage: make generate-requirements-txt
 # Example: make generate-requirements-txt
 .PHONY: generate-requirements-txt
 generate-requirements-txt:
-	@if [ -f poetry.lock ]; then \
+	@if [ -f uv.lock ]; then \
+		uv export --format requirements-txt --no-hashes > requirements.txt; \
+	elif [ -f poetry.lock ]; then \
 		poetry export --format requirements.txt --output requirements.txt; \
 	elif [ -f Pipfile.lock ]; then \
 		pipenv requirements > requirements.txt; \
@@ -229,9 +231,11 @@ build-dev:
 	podman build -t yuptoo-dev -f Dockerfile.dev .
 	podman run -it --rm -v $$(pwd):/app-root/yuptoo yuptoo-dev bash
 
-# Generate Pipefile.lock and requirements.txt files in container
+# Generate uv.lock and requirements.txt files in container
 # Usage: make generate-py-pkg-lock
 .PHONY: generate-py-pkg-lock
 generate-py-pkg-lock:
 	podman build -t yuptoo-dev -f Dockerfile.dev .
-	podman run -it --rm -v $$(pwd):/app-root/yuptoo yuptoo-dev bash /app-root/yuptoo/py-pkg-deps-in-container.sh
+	#podman run -it --rm -v $$(pwd):/app-root/yuptoo yuptoo-dev bash /app-root/yuptoo/py-pkg-deps-in-container.sh
+		podman run -it --rm -v $$(pwd):/app-root/yuptoo yuptoo-dev bash /app-root/yuptoo/py-pkg-deps-in-container.sh
+

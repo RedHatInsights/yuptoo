@@ -24,10 +24,17 @@ COPY --from=kafka_build /usr/lib/pkgconfig/rdkafka*.pc /usr/lib/pkgconfig/
 COPY --from=kafka_build /usr/include/librdkafka /usr/include/librdkafka
 RUN ldconfig
 
-COPY Pipfile Pipfile.lock main.py ${APP_ROOT}/src/
+#COPY Pipfile Pipfile.lock main.py ${APP_ROOT}/src/
+COPY pyproject.toml uv.lock main.py ${APP_ROOT}/src/
+
 RUN python -m pip install --upgrade pip && \
-    python -m pip install pipenv --ignore-installed && \
-    pipenv install --system --ignore-pipfile
+    python -m pip install "uv>=0.5.0" && \
+    cd ${APP_ROOT}/src && \
+    uv sync --frozen --no-dev && \
+    rm -rf /root/.cache/uv
+
+ENV PATH="${APP_ROOT}/src/.venv/bin:$PATH"
+
 COPY yuptoo ${APP_ROOT}/src/yuptoo/
 
 RUN microdnf remove -y which gcc gcc-c++ make zlib-devel openssl-devel libzstd-devel zip && \

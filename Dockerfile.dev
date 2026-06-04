@@ -10,6 +10,6 @@ RUN microdnf install --setopt=tsflags=nodocs -y python3.11 python3.11-pip python
 RUN set -ex && if [ -e `which python3.11` ]; then ln -s `which python3.11` /usr/local/bin/python; fi
 
 RUN python -m pip install --upgrade pip && \
-    python -m pip install pipenv --ignore-installed
+    python -m pip install "uv>=0.5.0"
 
 # pipenv install --system --ignore-pipfile
