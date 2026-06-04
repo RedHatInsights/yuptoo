@@ -1,0 +1,70 @@
+
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+    Lint:
+      runs-on: ubuntu-latest
+
+      steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version-file: pyproject.toml
+
+      - name: Install dependencies
+        run: |
+            uv sync --frozen
+
+      - name: Lint with flake8
+        run: |
+            uv run flake8
+
+    Test:
+      runs-on: ubuntu-latest
+
+      steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version-file: pyproject.toml
+
+      - name: Install dependencies
+        run: |
+            uv sync --frozen
+
+      - name: Test with pytest
+        run: |
+            uv run pytest --cov=yuptoo tests
+
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
+          verbose: true
+          flags: unittests
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
