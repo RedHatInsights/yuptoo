@@ -25,7 +25,7 @@ COPY --from=kafka_build /usr/include/librdkafka /usr/include/librdkafka
 RUN ldconfig
 
 COPY Pipfile Pipfile.lock main.py ${APP_ROOT}/src/
-RUN python -m pip install --upgrade pip && \
+RUN python -m pip install --upgrade "pip>=26.1.2" && \
     python -m pip install pipenv --ignore-installed && \
     pipenv install --system --ignore-pipfile
 COPY yuptoo ${APP_ROOT}/src/yuptoo/
