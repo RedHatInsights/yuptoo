@@ -132,7 +132,7 @@ generate-rpm-lockfile: rpms.in.yaml
 	@curl -s https://raw.githubusercontent.com/konflux-ci/rpm-lockfile-prototype/refs/heads/main/Containerfile | \
 	podman build -t localhost/rpm-lockfile-prototype -
 	@container_dir=/work; \
-	podman run --rm -v $${PWD}:$${container_dir} localhost/rpm-lockfile-prototype:latest --outfile=$${container_dir}/rpms.lock.yaml --image $(BASE_IMAGE) $${container_dir}/rpms.in.yaml
+	podman run --rm -v $${PWD}:$${container_dir}:Z localhost/rpm-lockfile-prototype:latest --outfile=$${container_dir}/rpms.lock.yaml --image $(BASE_IMAGE) $${container_dir}/rpms.in.yaml
 	@if [ ! -f rpms.lock.yaml ]; then \
 		echo "Error: rpms.lock.yaml was not generated"; \
 		exit 1; \
@@ -216,7 +216,7 @@ generate-requirements-build-txt:
 		echo "Error: Missing scripts in .hermetic_builds directory"; \
 		exit 1; \
 	fi
-	@podman run --arch $(IMAGE_ARCH) -it -v "$$(pwd)":/var/tmp:rw --user 0:0 $(BASE_IMAGE) bash -c "/var/tmp/.hermetic_builds/prep_python_build_container_dependencies.sh && /var/tmp/.hermetic_builds/generate_requirements_build.sh"
+	@podman run --arch $(IMAGE_ARCH) -it -v "$$(pwd)":/var/tmp:rw,Z --user 0:0 $(BASE_IMAGE) bash -c "/var/tmp/.hermetic_builds/prep_python_build_container_dependencies.sh && /var/tmp/.hermetic_builds/generate_requirements_build.sh"
 	@if [ ! -f requirements-build.txt ]; then \
 		echo "Error: requirements-build.txt was not generated"; \
 		exit 1; \
@@ -227,11 +227,11 @@ generate-requirements-build-txt:
 .PHONY: build-dev
 build-dev:
 	podman build -t yuptoo-dev -f Dockerfile.dev .
-	podman run -it --rm -v $$(pwd):/app-root/yuptoo yuptoo-dev bash
+	podman run -it --rm -v $$(pwd):/app-root/yuptoo:Z yuptoo-dev bash
 
 # Generate Pipefile.lock and requirements.txt files in container
 # Usage: make generate-py-pkg-lock
 .PHONY: generate-py-pkg-lock
 generate-py-pkg-lock:
 	podman build -t yuptoo-dev -f Dockerfile.dev .
-	podman run -it --rm -v $$(pwd):/app-root/yuptoo yuptoo-dev bash /app-root/yuptoo/py-pkg-deps-in-container.sh
+	podman run -it --rm -v $$(pwd):/app-root/yuptoo:Z yuptoo-dev bash /app-root/yuptoo/py-pkg-deps-in-container.sh
