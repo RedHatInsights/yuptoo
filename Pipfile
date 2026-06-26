@@ -11,6 +11,7 @@ insights-core = "==3.7.4"
 logstash-formatter = "*"
 prometheus-client = "*"
 requests = "==2.33.0"
+setuptools = "<82"
 watchtower = "*"
 wheel = ">=0.46.2"
 
