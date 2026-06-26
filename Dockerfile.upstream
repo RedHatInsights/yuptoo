@@ -10,7 +10,7 @@ WORKDIR $APP_ROOT/src/
 RUN set -ex && if [ -e `which python3.11` ]; then ln -s `which python3.11` /usr/local/bin/python; fi
 
 COPY Pipfile Pipfile.lock main.py ${APP_ROOT}/src/
-RUN python -m pip install --upgrade pip && \
+RUN python -m pip install --upgrade "pip>=26.1.2" && \
     python -m pip install pipenv --ignore-installed && \
     pipenv install --system --ignore-pipfile
 COPY yuptoo ${APP_ROOT}/src/yuptoo/

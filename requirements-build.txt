@@ -108,6 +108,7 @@ setuptools-scm==10.2.0 \
     #   hatch-vcs
     #   pluggy
     #   rpm
+    #   setuptools-scm
     #   urllib3
 setuptools-scm==7.1.0 \
     --hash=sha256:6c508345a771aad7d56ebff0e70628bf2b0ec7573762be9960214730de278f27 \
