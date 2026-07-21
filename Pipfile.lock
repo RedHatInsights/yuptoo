@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "72df9e7579c7159cc491172fe3edcf069446732cf8e2b78d0fe5ad5f50849823"
+            "sha256": "06fcadf7bca8ec467853629ab09410dd4c5fd238bd6fb05c4be4401f58bf4f0d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -265,12 +265,12 @@
         },
         "insights-core": {
             "hashes": [
-                "sha256:6562c2eb0785637dd04f382ecb7f00433627e45ec70ac6b8cd1dc2eb1c40b2b9",
-                "sha256:8cbf9f6bc2ca2a040284e9cc0b6bdb934282dcf7d1c64b645641e61f9dc6b37b"
+                "sha256:3d3610945f824e988cb13a0ea479000e6fb45b703491c7628ccb352d4f4229b3",
+                "sha256:ed3e72d4b6e3249cd9e1d02116eb3825ca54a6fb9e0a0846fd9bd359888990b2"
             ],
             "index": "pypi",
             "markers": "python_version >= '2.7'",
-            "version": "==3.7.4"
+            "version": "==3.7.7"
         },
         "jinja2": {
             "hashes": [
