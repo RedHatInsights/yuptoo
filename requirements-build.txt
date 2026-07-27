@@ -100,9 +100,9 @@ setuptools-scm-git-archive==1.4.1 \
     --hash=sha256:4a0b90286f469df220769a66ed1e910a11f524c61f3caa2cd4fad95750ac3b4f \
     --hash=sha256:c418bc77b3974d3ac65f268f058f23e01dc5f991f2233128b0e16a69de227b09
     # via rpm
-setuptools-scm==10.2.0 \
-    --hash=sha256:6cc5ac7da8e54d74e43503be2fa023eb7a1ca820d5c318e6ae20efc48110d6c7 \
-    --hash=sha256:ec8ea1738b92e42146a46e29a0e9de9ad462744c63cf9778677b95dfd605adde
+setuptools-scm==10.2.1 \
+    --hash=sha256:4fa7dd82cf8c800df59c9a288c90299b1657ff1ecfc3f5cc00287c5dbf5e27a9 \
+    --hash=sha256:b7c82f4102d389ee57dc66ccdb4f9b4bca3c40ba83b43f1f63d68ccd72db2580
     # via
     #   app-common-python
     #   hatch-vcs
@@ -110,7 +110,7 @@ setuptools-scm==10.2.0 \
     #   rpm
     #   setuptools-scm
     #   urllib3
-setuptools-scm==7.1.0 \
+setuptools-scm==10.2.1 \
     --hash=sha256:6c508345a771aad7d56ebff0e70628bf2b0ec7573762be9960214730de278f27 \
     --hash=sha256:73988b6d848709e2af142aa48c986ea29592bbcfca5375678064708205253d8e
     # via python-dateutil
