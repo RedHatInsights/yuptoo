@@ -67,9 +67,9 @@ hatch-vcs==0.5.0 \
     #   filelock
     #   urllib3
     #   watchtower
-hatchling==1.30.1 \
-    --hash=sha256:161eacafb3c6f91526e92116d21426369f2c36e98c36a864f11a96345ad4ee31 \
-    --hash=sha256:eee4fd45357f72ebb3d7a42e5d72cfb5e29ed426d79e8836288926c4258d5f2e
+hatchling==1.32.0 \
+    --hash=sha256:0bdbde4a52b06c37e3eca395f85a762bf0ef06fe374fd8ae429dc6be10230f5f \
+    --hash=sha256:0e17c9c3b9aa7c625acc8d0f5b622f107d5049af9ecf5ada4de1aada5be7cdbc
     # via
     #   filelock
     #   hatch-vcs
