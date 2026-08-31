@@ -1,5 +1,5 @@
 -i https://pypi.org/simple
-app-common-python==0.2.8
+app-common-python==0.3.0
 boto3==1.43.36; python_version >= '3.10'
 botocore==1.43.36; python_version >= '3.10'
 cachecontrol[filecache,redis]==0.14.3; python_version >= '3.9'
