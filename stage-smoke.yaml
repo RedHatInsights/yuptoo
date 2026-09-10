@@ -19,7 +19,7 @@ objects:
         dynaconfEnvName: stage_post_deploy
         filter: ''
         marker: 'stage_post_deploy'
-        plugins: 'foreman_rh_cloud'
+        plugins: 'insights_upload_processor'
 parameters:
 - name: IMAGE_TAG
   value: ''
