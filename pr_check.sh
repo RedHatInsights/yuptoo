@@ -5,11 +5,11 @@ export COMPONENT_NAME="yuptoo"                # name of app-sre "resourceTemplat
 export IMAGE="quay.io/cloudservices/yuptoo"   # the image location on quay
 export DOCKERFILE="Dockerfile"
 
-export IQE_IMAGE_TAG="foreman-rh-cloud"
-export IQE_PLUGINS="foreman-rh-cloud"         # name of the IQE plugin for this APP
-export IQE_MARKER_EXPRESSION="yupana_smoke"   # This is the value passed to pytest -m
-export IQE_FILTER_EXPRESSION=""               # This is the value passed to pytest -k
-export IQE_CJI_TIMEOUT="30m"                  # This is the time to wait for smoke test to complete or fail
+export IQE_IMAGE_TAG="insights-upload-processor"
+export IQE_PLUGINS="insights_upload_processor"  # name of the IQE plugin for this APP
+export IQE_MARKER_EXPRESSION="yupana_smoke"     # This is the value passed to pytest -m
+export IQE_FILTER_EXPRESSION=""                 # This is the value passed to pytest -k
+export IQE_CJI_TIMEOUT="30m"                    # This is the time to wait for smoke test to complete or fail
 export IQE_PARALLEL_ENABLED="false"
 
 # Install bonfire repo/initialize
@@ -28,7 +28,7 @@ source $CICD_ROOT/deploy_ephemeral_env.sh
 
 # Enable smoke test results upload to report portal
 export IQE_RP_ARGS="true"
-export IQE_IBUTSU_SOURCE="yuptoo-ephemeral-${IMAGE_TAG}" 
+export IQE_IBUTSU_SOURCE="yuptoo-ephemeral-${IMAGE_TAG}"
 
 # Run smoke tests with ClowdJobInvocation
 source $CICD_ROOT/cji_smoke_test.sh
