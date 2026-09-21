@@ -49,9 +49,9 @@ cython==3.2.6 \
     --hash=sha256:f9506c30bf137bf9255fe98e46e4696ef008e99ba01698b8dc2024da060ef379 \
     --hash=sha256:fed593ff9beeda252acce9f8b475f5107a3a04f99183950b8a4ba45c5b5bb959
     # via pyyaml
-flit-core==3.12.0 \
-    --hash=sha256:18f63100d6f94385c6ed57a72073443e1a71a4acb4339491615d0f16d6ff01b2 \
-    --hash=sha256:e7a0304069ea895172e3c7bb703292e992c5d1555dd1233ab7b5621b5b69e62c
+flit-core==4.1.0 \
+    --hash=sha256:17398cdd2c38b24047a5a9c93089ec5c0bf12ec3d1469bbf69c27ed7965299db \
+    --hash=sha256:62e12b63ead8335b37f59fabb977c7167fe476dafb5e41785dfa8c9aff843bc6
     # via
     #   cachecontrol
     #   idna
