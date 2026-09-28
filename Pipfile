@@ -14,7 +14,6 @@ requests = "==2.33.0"
 setuptools = "<82"
 watchtower = "*"
 wheel = ">=0.46.2"
-argon2-cffi-bindings = "<26"
 
 [requires]
 python_version = "3.11"
