@@ -122,9 +122,9 @@ typing-extensions==4.15.0 \
     --hash=sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466 \
     --hash=sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
     # via setuptools-scm
-vcs-versioning==2.2.0 \
-    --hash=sha256:532dd99dd85e6f17667d5ca9a028b494a6e0d65dbc9d92716f1d0401078be6a0 \
-    --hash=sha256:69a649bfbbe9f8134e8b15cddc7b27daa00e5eccbcb5128e060a87e94bad8255
+vcs-versioning==2.5.0 \
+    --hash=sha256:956a796e31f80fe714d219d6d1df15a6bf247d10f6d851bf4b98279d0a42da55 \
+    --hash=sha256:dbf44f6303dc817e5792cb7d0e9cc90e3046ee1e32eaa357b20ad368811313d0
     # via setuptools-scm
 wheel==0.47.0 ; python_version >= "3.9" \
     --hash=sha256:212281cab4dff978f6cedd499cd893e1f620791ca6ff7107cf270781e587eced \
