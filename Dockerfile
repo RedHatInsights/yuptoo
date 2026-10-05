@@ -5,7 +5,7 @@ RUN ./configure --prefix=/usr && \
     make && \
     make install
 
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.8-1790074235
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.8-1790754119
 
 
 # Install dependencies, including runtime libraries
