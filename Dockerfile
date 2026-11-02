@@ -25,6 +25,7 @@ COPY --from=kafka_build /usr/include/librdkafka /usr/include/librdkafka
 RUN ldconfig
 
 COPY Pipfile Pipfile.lock main.py ${APP_ROOT}/src/
+ENV PIP_NO_CACHE_DIR=1
 RUN python -m pip install --upgrade pip && \
     python -m pip install pipenv --ignore-installed && \
     pipenv install --system --ignore-pipfile && \
