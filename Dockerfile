@@ -25,9 +25,11 @@ COPY --from=kafka_build /usr/include/librdkafka /usr/include/librdkafka
 RUN ldconfig
 
 COPY Pipfile Pipfile.lock main.py ${APP_ROOT}/src/
+ENV PIP_NO_CACHE_DIR=1
 RUN python -m pip install --upgrade pip && \
     python -m pip install pipenv --ignore-installed && \
-    pipenv install --system --ignore-pipfile
+    pipenv install --system --ignore-pipfile && \
+    python -m pip uninstall -y pipenv virtualenv
 COPY yuptoo ${APP_ROOT}/src/yuptoo/
 
 RUN microdnf remove -y which gcc gcc-c++ make zlib-devel openssl-devel libzstd-devel zip && \
