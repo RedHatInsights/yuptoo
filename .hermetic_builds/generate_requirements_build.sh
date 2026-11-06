@@ -1,7 +1,7 @@
 #!/bin/bash
 
-pip3 install --upgrade "pip>=26.1.2"
-pip3 install pip-tools pybuild-deps
+pip3 install "pip==26.1.2"
+pip3 install "pip-tools<7.6.1" pybuild-deps==0.5.0
 cd /var/tmp
 
 pybuild-deps compile --generate-hashes requirements.txt -o requirements-build.txt
