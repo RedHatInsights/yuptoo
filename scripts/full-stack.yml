@@ -94,7 +94,7 @@ services:
        - kafka
 
   yuptoo:
-    image: quay.io/cloudservices/yuptoo:latest
+    image: quay.io/redhat-services-prod/insights-management-tenant/insights-yuptoo/yuptoo:latest
     command: [ '/bin/sh', '-c', 'python -m main' ]
     ports:
       - 8000:8000 #for prometheus endpoint
