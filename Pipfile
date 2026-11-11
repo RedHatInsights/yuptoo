@@ -7,6 +7,7 @@ verify_ssl = true
 app-common-python = "==0.2.8"
 insights-core = "==3.6.7"
 logstash-formatter = "*"
+msgpack = ">=1.2.3"
 prometheus-client = "*"
 requests = "*"
 watchtower = "*"
