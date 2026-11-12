@@ -12,7 +12,7 @@ logstash-formatter = "*"
 msgpack = ">=1.2.3"
 prometheus-client = "*"
 requests = "==2.33.0"
-setuptools = "<82"
+setuptools = "<85"
 watchtower = "*"
 wheel = ">=0.46.2"
 
