@@ -5,7 +5,9 @@ verify_ssl = true
 
 [packages]
 app-common-python = "==0.2.8"
+boto3 = ">=1.43.117"
 cachecontrol = "<0.14.4"
+certifi = ">=2026.10.19"
 confluent-kafka = "==2.13.2"
 insights-core = "==3.7.4"
 logstash-formatter = "*"
