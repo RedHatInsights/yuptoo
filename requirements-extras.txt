@@ -24,9 +24,9 @@ packaging==25.0 \
     # via
     #   pipenv
     #   virtualenv
-pipenv==2025.0.3 \
-    --hash=sha256:87370bedcf0ff66d226af07ca341ae94afcc08fed90d57ad9fea9ffd44ced4d3 \
-    --hash=sha256:f0a67aa928824e61003d52acea72a94b180800019f03d38a311966f6330bc8d1
+pipenv==2026.11.0 \
+    --hash=sha256:70f53e11c9429f2ce2511aa044bfd20b1e9c3e8aa3492978894d679fc96e18c3 \
+    --hash=sha256:87ae9e8315c8e1898d393b9eb21b4a799b2354c26e9aa81c4a1258cd2fd45f92
     # via -r requirements-build.in
 platformdirs==4.3.8 \
     --hash=sha256:3d512d96e16bcb959a814c9f348431070822a6496326a4be0911c40b5a74c2bc \
